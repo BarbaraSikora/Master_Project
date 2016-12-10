@@ -1,0 +1,15 @@
+
+plugin.tx_bstextclassification_bstextclassification {
+	view {
+		# cat=plugin.tx_bstextclassification_bstextclassification/file; type=string; label=Path to template root (FE)
+		templateRootPath = EXT:bs_text_classification/Resources/Private/Templates/
+		# cat=plugin.tx_bstextclassification_bstextclassification/file; type=string; label=Path to template partials (FE)
+		partialRootPath = EXT:bs_text_classification/Resources/Private/Partials/
+		# cat=plugin.tx_bstextclassification_bstextclassification/file; type=string; label=Path to template layouts (FE)
+		layoutRootPath = EXT:bs_text_classification/Resources/Private/Layouts/
+	}
+	persistence {
+		# cat=plugin.tx_bstextclassification_bstextclassification//a; type=string; label=Default storage PID
+		storagePid =
+	}
+}

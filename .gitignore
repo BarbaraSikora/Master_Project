@@ -1,0 +1,12 @@
+.idea
+.metadata
+typo3temp
+typo3conf/AdditionalConfiguration.php
+fileadmin
+typo3conf/ENABLE_INSTALL_TOOL
+RemoteSystemsTempFiles
+index.php
+typo3
+typo3_src
+uploads
+typo3conf/ext/extension_builder

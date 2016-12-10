@@ -1,0 +1,89 @@
+{
+    "modules": [
+        {
+            "config": {
+                "position": [
+                    254,
+                    163
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_list": true,
+                    "_default1_show": false,
+                    "_default2_new_create": false,
+                    "_default3_edit_update": false,
+                    "_default4_delete": false,
+                    "customActions": []
+                },
+                "name": "Terms",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": false,
+                    "categorizable": false,
+                    "description": "",
+                    "mapToTable": "",
+                    "parentClass": "",
+                    "sorting": false,
+                    "type": "Entity",
+                    "uid": "1179902499197"
+                },
+                "propertyGroup": {
+                    "properties": []
+                },
+                "relationGroup": {
+                    "relations": []
+                }
+            }
+        }
+    ],
+    "properties": {
+        "backendModules": [],
+        "description": "Classifies different articles with different algorithms",
+        "emConf": {
+            "category": "plugin",
+            "custom_category": "",
+            "dependsOn": "extbase => 7.6.0\nfluid => 7.6.0\ntypo3 => 7.6.0-7.6.99\n",
+            "disableLocalization": false,
+            "disableVersioning": false,
+            "skipGenerateDocumentationTemplate": false,
+            "sourceLanguage": "en",
+            "state": "alpha",
+            "targetVersion": "7.6.0-7.6.99",
+            "version": "1.0.0"
+        },
+        "extensionKey": "bs_text_classification",
+        "name": "TextClassification Module",
+        "originalExtensionKey": "bs_text_classification",
+        "originalVendorName": "TextClassification",
+        "persons": [
+            {
+                "company": "FH Hagenberg",
+                "email": "barbara-sikora@gmx.at",
+                "name": "Barbara Sikora",
+                "role": "Developer"
+            }
+        ],
+        "plugins": [
+            {
+                "actions": {
+                    "controllerActionCombinations": "",
+                    "noncacheableActions": "",
+                    "switchableActions": ""
+                },
+                "key": "bstextclassification",
+                "name": "BS Text Classification"
+            }
+        ],
+        "vendorName": "TextClassification"
+    },
+    "wires": [],
+    "log": {
+        "last_modified": "2016-12-07 12:46",
+        "extension_builder_version": "7.6.0",
+        "be_user": " (1)"
+    }
+}
