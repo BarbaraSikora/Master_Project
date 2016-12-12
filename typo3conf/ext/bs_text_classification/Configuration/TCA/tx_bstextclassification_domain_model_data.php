@@ -1,8 +1,8 @@
 <?php
 return array(
 	'ctrl' => array(
-		'title'	=> 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_terms',
-		'label' => 'category',
+		'title'	=> 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data',
+		'label' => 'title',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -19,14 +19,14 @@ return array(
 			'starttime' => 'starttime',
 			'endtime' => 'endtime',
 		),
-		'searchFields' => 'category,title,description,',
-		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('bs_text_classification') . 'Resources/Public/Icons/tx_bstextclassification_domain_model_terms.gif'
+		'searchFields' => 'title,description,category,content,',
+		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('bs_text_classification') . 'Resources/Public/Icons/tx_bstextclassification_domain_model_data.gif'
 	),
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, category, title, description',
+		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, title, description, category, content',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, category, title, description, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, title, description, category, content, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -57,8 +57,8 @@ return array(
 				'items' => array(
 					array('', 0),
 				),
-				'foreign_table' => 'tx_bstextclassification_domain_model_terms',
-				'foreign_table_where' => 'AND tx_bstextclassification_domain_model_terms.pid=###CURRENT_PID### AND tx_bstextclassification_domain_model_terms.sys_language_uid IN (-1,0)',
+				'foreign_table' => 'tx_bstextclassification_domain_model_data',
+				'foreign_table_where' => 'AND tx_bstextclassification_domain_model_data.pid=###CURRENT_PID### AND tx_bstextclassification_domain_model_data.sys_language_uid IN (-1,0)',
 			),
 		),
 		'l10n_diffsource' => array(
@@ -116,18 +116,9 @@ return array(
 			),
 		),
 
-		'category' => array(
-			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_terms.category',
-			'config' => array(
-				'type' => 'input',
-				'size' => 30,
-				'eval' => 'trim'
-			),
-		),
 		'title' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_terms.title',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.title',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
@@ -136,7 +127,25 @@ return array(
 		),
 		'description' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_terms.description',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.description',
+			'config' => array(
+				'type' => 'input',
+				'size' => 30,
+				'eval' => 'trim'
+			),
+		),
+		'category' => array(
+			'exclude' => 1,
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.category',
+			'config' => array(
+				'type' => 'input',
+				'size' => 30,
+				'eval' => 'trim'
+			),
+		),
+		'content' => array(
+			'exclude' => 1,
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.content',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,

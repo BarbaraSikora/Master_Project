@@ -1,5 +1,5 @@
 <?php
-namespace TextClassification\BsTextClassification\Controller;
+namespace TextClassification\BsTextClassification\Domain\Repository;
 
 /***************************************************************
  *
@@ -27,33 +27,10 @@ namespace TextClassification\BsTextClassification\Controller;
  ***************************************************************/
 
 /**
- * TermsController
+ * The repository for Datas
  */
-class TermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+class DataRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
 
-    /**
-     * action list
-     * 
-     * @return void
-     */
-    public function listAction()
-    {
-        $tester = 'Hallo Internet!';
-        // $terms = $this->termsRepository->findAll();
-        $this->view->assign('inet', $tester);
-    }
     
-    /**
-     * action index
-     * 
-     * @return void
-     */
-    public function indexAction()
-    {
-        $tester = 'INDEX';
-        // $terms = $this->termsRepository->findAll();
-        $this->view->assign('index', $tester);
-    }
-
 }

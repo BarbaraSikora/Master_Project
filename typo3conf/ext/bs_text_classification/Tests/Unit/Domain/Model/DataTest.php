@@ -27,53 +27,28 @@ namespace TextClassification\BsTextClassification\Tests\Unit\Domain\Model;
  ***************************************************************/
 
 /**
- * Test case for class \TextClassification\BsTextClassification\Domain\Model\Terms.
+ * Test case for class \TextClassification\BsTextClassification\Domain\Model\Data.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  * @author Barbara Sikora <barbara-sikora@gmx.at>
  */
-class TermsTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class DataTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 {
 	/**
-	 * @var \TextClassification\BsTextClassification\Domain\Model\Terms
+	 * @var \TextClassification\BsTextClassification\Domain\Model\Data
 	 */
 	protected $subject = NULL;
 
 	public function setUp()
 	{
-		$this->subject = new \TextClassification\BsTextClassification\Domain\Model\Terms();
+		$this->subject = new \TextClassification\BsTextClassification\Domain\Model\Data();
 	}
 
 	public function tearDown()
 	{
 		unset($this->subject);
-	}
-
-	/**
-	 * @test
-	 */
-	public function getCategoryReturnsInitialValueForString()
-	{
-		$this->assertSame(
-			'',
-			$this->subject->getCategory()
-		);
-	}
-
-	/**
-	 * @test
-	 */
-	public function setCategoryForStringSetsCategory()
-	{
-		$this->subject->setCategory('Conceived at T3CON10');
-
-		$this->assertAttributeEquals(
-			'Conceived at T3CON10',
-			'category',
-			$this->subject
-		);
 	}
 
 	/**
@@ -122,6 +97,56 @@ class TermsTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 		$this->assertAttributeEquals(
 			'Conceived at T3CON10',
 			'description',
+			$this->subject
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getCategoryReturnsInitialValueForString()
+	{
+		$this->assertSame(
+			'',
+			$this->subject->getCategory()
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function setCategoryForStringSetsCategory()
+	{
+		$this->subject->setCategory('Conceived at T3CON10');
+
+		$this->assertAttributeEquals(
+			'Conceived at T3CON10',
+			'category',
+			$this->subject
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getContentReturnsInitialValueForString()
+	{
+		$this->assertSame(
+			'',
+			$this->subject->getContent()
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function setContentForStringSetsContent()
+	{
+		$this->subject->setContent('Conceived at T3CON10');
+
+		$this->assertAttributeEquals(
+			'Conceived at T3CON10',
+			'content',
 			$this->subject
 		);
 	}

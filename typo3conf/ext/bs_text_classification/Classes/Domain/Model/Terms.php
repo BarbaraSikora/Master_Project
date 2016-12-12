@@ -1,7 +1,6 @@
 <?php
 namespace TextClassification\BsTextClassification\Domain\Model;
 
-
 /***************************************************************
  *
  *  Copyright notice
@@ -33,5 +32,88 @@ namespace TextClassification\BsTextClassification\Domain\Model;
 class Terms extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
 
+    /**
+     * category
+     * 
+     * @var string
+     */
+    protected $category = '';
     
+    /**
+     * title
+     * 
+     * @var string
+     */
+    protected $title = '';
+    
+    /**
+     * description
+     * 
+     * @var string
+     */
+    protected $description = '';
+    
+    /**
+     * Returns the category
+     * 
+     * @return string $category
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+    
+    /**
+     * Sets the category
+     * 
+     * @param string $category
+     * @return void
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
+    
+    /**
+     * Returns the title
+     * 
+     * @return string $title
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+    
+    /**
+     * Sets the title
+     * 
+     * @param string $title
+     * @return void
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+    
+    /**
+     * Returns the description
+     * 
+     * @return string $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+    
+    /**
+     * Sets the description
+     * 
+     * @param string $description
+     * @return void
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
 }

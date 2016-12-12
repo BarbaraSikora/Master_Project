@@ -1,0 +1,33 @@
+
+<f:layout name="Default" />
+
+
+<f:section name="main">
+<h1>Listing the Data</h1>
+{datas}
+<f:flashMessages />
+	<f:comment>
+	<table  class="tx_bstextclassification" >
+	<tr>
+		<th><f:translate key="tx_bstextclassification_domain_model_data.title" /></th>
+		<th><f:translate key="tx_bstextclassification_domain_model_data.description" /></th>
+		<th><f:translate key="tx_bstextclassification_domain_model_data.category" /></th>
+		<th><f:translate key="tx_bstextclassification_domain_model_data.content" /></th>
+		<th> </th>
+		<th> </th>
+	</tr>
+
+	<f:for each="{datas}" as="data">
+		<tr>
+			<td><f:link.action action="show" arguments="{data : data}"> {data.title}</f:link.action></td>
+			<td><f:link.action action="show" arguments="{data : data}"> {data.description}</f:link.action></td>
+			<td><f:link.action action="show" arguments="{data : data}"> {data.category}</f:link.action></td>
+			<td><f:link.action action="show" arguments="{data : data}"> {data.content}</f:link.action></td>
+			<td><f:link.action action="edit" arguments="{data : data}">Edit</f:link.action></td>
+			<td><f:link.action action="delete" arguments="{data : data}">Delete</f:link.action></td>
+		</tr>
+	</f:for>
+</table>
+	</f:comment>
+
+</f:section>
