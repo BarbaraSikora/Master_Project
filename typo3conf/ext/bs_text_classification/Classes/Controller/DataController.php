@@ -2,6 +2,7 @@
 namespace TextClassification\BsTextClassification\Controller;
 
 use TextClassification\BsTextClassification\Domain\Model\Data;
+use TextClassification\BsTextClassification\Domain\Repository\DataRepository;
 /***************************************************************
  *
  *  Copyright notice
@@ -30,66 +31,84 @@ use TextClassification\BsTextClassification\Domain\Model\Data;
 /**
  * DataController
  */
-class DataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
+
     /**
      * dataRepository
      * 
      * @var \TextClassification\BsTextClassification\Domain\Repository\DataRepository
      * @inject
      */
-    protected $dataRepository = NULL;
-    protected $help = NULL;
-
+    protected $dataRepository = null;
+    
+    protected $help = null;
+    
     /**
      * action data
-     *
+     * 
      * @return void
      */
     public function dataAction()
     {
         $help = new \TextClassification\BsTextClassification\Classes\AdditionalHelper\Helper();
         //get Data from guardian
-        $url_ENG = "https://www.theguardian.com/world/2016/dec/10/bomb-outside-istanbul-football-stadium-causes-multiple-casualties";
-
+        $url_ENG = 'https://www.theguardian.com/international';
+        // get LINKS of Categories
         $text = $help->getData($url_ENG);
+        $classname = 'top-navigation__action';
+        $doc = new \DOMDocument();
+        $doc->loadHTML($text);
+        $nodelist = $help->getNodeList("//nav//ul//a[contains(@class, '{$classname}')]/@href", $doc);
+        $categoryLinks = array();
+        foreach ($nodelist as $node) {
+            $categoryLinks[] = "{$node->nodeValue}";
+        }
 
-        //filter data
+        for ($i = 12; $i < 13; $i++) {
+            //get Article-Links of each category
+            $url_ENG = $categoryLinks[$i];
+            $links = array();
+            $links = $help->getAllLinks($url_ENG . '/all', $links, $doc);
 
-        $meta = get_meta_tags($url_ENG);
-        $title = $help->getEverythingBetweenTags($text,"title");
-        $split = preg_split('/\|+/', $title);
+            foreach ($links as $link) {
+                $text = $help->getData($link);
+                $doc->loadHTML($text);
+                $meta = get_meta_tags($link);
+                $title = $help->getEverythingBetweenTags($text, 'title');
+                $split = preg_split('/\\|+/', $title);
 
-        $dataCategory = $split[1];
-        $dataTitle = $title;
-        $dataDescription = $meta['description'];
-        $dataContent = implode(" ",$help->pregMatchAll($text,'p','p'));
+                $dataCategory = $split[count($split) - 2];
+                $dataTitle = $title;
+                $dataDescription = $meta['description'];
+                $dataContent = implode(' ', $help->pregMatchAll($text, 'p', 'p'));
+                $attr = 'datePublished';
+                $dataDate = $help->getNodeList("//div//p/time[contains(@itemprop, '{$attr}')]/@datetime", $doc);
+                $date = $dataDate[0]->nodeValue;
+                $date = str_replace("T"," ",$date);
+                $date = str_replace("+0000","",$date);
 
-        // preprocess Data tags weg, stopwords weg leezeichen weg, stemming
-
-        $dataContent = $help->preprocessingData($dataContent);
-        $dataTitle = $help->preprocessingData($dataTitle);
-        $dataDescription = $help->preprocessingData($dataDescription);
-
-        $data =[
-            "dataCategory" => $dataCategory,
-            "dataTitle" => implode(" ",$dataTitle),
-            "dataDescription" => implode(" ",$dataDescription),
-            "dataContent" => implode(" ",$dataContent)
-        ];
-
-
-        $this->newAction($data);
-
-      /*  print "<pre>";
-        print_r($dataContent);
-        print "</pre>";
-
-        $this->view->assign('output', $data );*/
+                // preprocess Data tags weg, stopwords weg leezeichen weg, stemming
+                $dataContent = $help->preprocessingData($dataContent);
+                $dataTitle = $help->preprocessingData($dataTitle);
+                $dataDescription = $help->preprocessingData($dataDescription);
+                $data = array(
+                    'datePublished' => $date,
+                    'dataCategory' => $dataCategory,
+                    'dataTitle' => implode(' ', $dataTitle),
+                    'dataDescription' => implode(' ', $dataDescription),
+                    'dataContent' => implode(' ', $dataContent)
+                );
+                $this->newAction($data);
+            }
+        }
+        /*   print "<pre>";
+             print_r($links);
+             print "</pre>";*/
+        
+       $this->redirect('list');
     }
-
-
-
+    
     /**
      * action list
      * 
@@ -97,24 +116,26 @@ class DataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     public function listAction()
     {
-       // $datas = $this->dataRepository->findAll();
-        $this->view->assign('datas', "UHHH LISTE");
+        $datas = $this->dataRepository->findAll();
+        $this->view->assign('datas', $datas);
     }
     
     /**
      * action new
      * 
+     * @param $d
      * @return void
      */
     public function newAction($d)
     {
         $data = new Data();
         $data->setTitle($d['dataTitle']);
+        $data->setDatePublished($d['datePublished']);
         $data->setDescription($d['dataDescription']);
         $data->setCategory($d['dataCategory']);
         $data->setContent($d['dataContent']);
-
         $this->createAction($data);
+
     }
     
     /**
@@ -125,10 +146,8 @@ class DataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     public function createAction(\TextClassification\BsTextClassification\Domain\Model\Data $newData)
     {
-        $this->redirect('list');
-        /*$this->addFlashMessage('The object was created. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
+        //$this->addFlashMessage('The object was created.', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->dataRepository->add($newData);
-        $this->redirect('list');*/
     }
     
     /**

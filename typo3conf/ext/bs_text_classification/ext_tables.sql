@@ -51,6 +51,7 @@ CREATE TABLE tx_bstextclassification_domain_model_data (
 	description varchar(255) DEFAULT '' NOT NULL,
 	category varchar(255) DEFAULT '' NOT NULL,
 	content varchar(255) DEFAULT '' NOT NULL,
+	date_published varchar(255) DEFAULT '' NOT NULL,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,

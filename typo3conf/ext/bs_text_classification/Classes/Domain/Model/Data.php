@@ -61,6 +61,13 @@ class Data extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $content = '';
     
     /**
+     * datePublished
+     * 
+     * @var string
+     */
+    protected $datePublished = '';
+    
+    /**
      * Returns the title
      * 
      * @return string $title
@@ -142,6 +149,27 @@ class Data extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setContent($content)
     {
         $this->content = $content;
+    }
+    
+    /**
+     * Returns the datePublished
+     * 
+     * @return string $datePublished
+     */
+    public function getDatePublished()
+    {
+        return $this->datePublished;
+    }
+    
+    /**
+     * Sets the datePublished
+     * 
+     * @param string $datePublished
+     * @return void
+     */
+    public function setDatePublished($datePublished)
+    {
+        $this->datePublished = $datePublished;
     }
 
 }

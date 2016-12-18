@@ -19,14 +19,14 @@ return array(
 			'starttime' => 'starttime',
 			'endtime' => 'endtime',
 		),
-		'searchFields' => 'title,description,category,content,',
+		'searchFields' => 'title,description,category,content,date_published,',
 		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('bs_text_classification') . 'Resources/Public/Icons/tx_bstextclassification_domain_model_data.gif'
 	),
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, title, description, category, content',
+		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, title, description, category, content, date_published',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, title, description, category, content, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, title, description, category, content, date_published, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -146,6 +146,15 @@ return array(
 		'content' => array(
 			'exclude' => 1,
 			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.content',
+			'config' => array(
+				'type' => 'input',
+				'size' => 30,
+				'eval' => 'trim'
+			),
+		),
+		'date_published' => array(
+			'exclude' => 1,
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.date_published',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,

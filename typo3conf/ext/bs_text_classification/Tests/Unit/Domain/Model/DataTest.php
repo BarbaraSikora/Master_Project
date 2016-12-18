@@ -150,4 +150,29 @@ class DataTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 			$this->subject
 		);
 	}
+
+	/**
+	 * @test
+	 */
+	public function getDatePublishedReturnsInitialValueForString()
+	{
+		$this->assertSame(
+			'',
+			$this->subject->getDatePublished()
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function setDatePublishedForStringSetsDatePublished()
+	{
+		$this->subject->setDatePublished('Conceived at T3CON10');
+
+		$this->assertAttributeEquals(
+			'Conceived at T3CON10',
+			'datePublished',
+			$this->subject
+		);
+	}
 }

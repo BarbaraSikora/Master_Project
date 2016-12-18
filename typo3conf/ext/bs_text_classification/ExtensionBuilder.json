@@ -142,6 +142,16 @@
                             "propertyName": "content",
                             "propertyType": "String",
                             "uid": "328824430871"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsRequired": false,
+                            "propertyName": "datePublished",
+                            "propertyType": "String",
+                            "uid": "1200185119246"
                         }
                     ]
                 },
@@ -193,7 +203,7 @@
     },
     "wires": [],
     "log": {
-        "last_modified": "2016-12-12 04:19",
+        "last_modified": "2016-12-17 03:56",
         "extension_builder_version": "7.6.0",
         "be_user": " (1)"
     }

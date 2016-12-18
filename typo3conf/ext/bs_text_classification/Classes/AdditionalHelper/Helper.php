@@ -61,9 +61,9 @@ class Helper
      *
      * @return string
      */
-    public function pregMatchAll($string, $classname, $endtag)
+    public function pregMatchAll($string, $starttag, $endtag)
     {
-        $pattern = "#<$classname>(.*?)</$endtag\b[^>]*>#s";
+        $pattern = "#<$starttag>(.*?)</$endtag\b[^>]*>#s";
         preg_match_all($pattern, $string, $matches);
         return array_unique($matches[1]);
     }
@@ -96,5 +96,53 @@ class Helper
         // $array = $stem->stemAll($array);
         return $array;
     }
+
+    /**
+     * action getNodeList of query
+     *
+     * @return \DOMNodeList
+     */
+    public function getNodeList($query,$doc)
+    {
+        $finder= new \DomXPath($doc);
+        $links = $finder->query($query);
+
+
+        return $links;
+    }
+
+    /**
+     * action getAllLinks
+     *
+     * @return array
+     */
+    public function getAllLinks($url,$array,$doc)
+    {
+        if(count($array) < 50){
+        $text = $this->getData($url);
+        $doc->loadHTML($text);
+        $attr = "article";
+        $nodelist = $this->getNodeList("//section//ul//a[contains(@data-link-name, '$attr')]/@href",$doc);
+        foreach ($nodelist as $node) {
+            $array[] =  "{$node->nodeValue}";
+        }
+        $array = array_unique($array);
+        foreach($array as $key => $one) {
+            if(strpos($one, 'video') !== false || strpos($one, 'audio') !== false || strpos($one, 'picture') !== false || strpos($one, 'live') !== false || strpos($one, 'gallery') !== false)
+                unset($array[$key]);
+        }
+        $array = array_values($array);
+
+        $attr="next";
+        $next = $this->getNodeList("//div//a[contains(@rel, '$attr')]/@href",$doc);
+        $next = $next[0]->nodeValue;
+
+        $array = $this->getAllLinks($next,$array,$doc);
+        }
+        return $array;
+    }
+
+
+
 
 }
