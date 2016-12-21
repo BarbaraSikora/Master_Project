@@ -3,6 +3,7 @@ if (!defined('TYPO3_MODE')) {
 	die('Access denied.');
 }
 
+
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_reflection']['backend'] = 'TYPO3\CMS\Core\Cache\Backend\NullBackend';
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_object']['backend'] = 'TYPO3\CMS\Core\Cache\Backend\NullBackend';
 
@@ -10,13 +11,16 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_ob
 	'TextClassification.' . $_EXTKEY,
 	'Bstextclassification',
 	array(
-		'Data' => 'list, data, new, create, edit, update, delete',
-		'Terms' => 'list',
+		'EnglishTerms' => 'knn,list, show, new, create, edit, update, delete',
+		'EnglishData' => 'list, data, new, create, edit, update, delete',
+
+
+		
 	),
 	// non-cacheable actions
 	array(
-		'Data' => 'list, data, new, create, edit, update, delete',
-		'Terms' => 'list',
+		'EnglishTerms' => 'knn, list, show,  new, create, edit, update, delete',
+		'EnglishData' => 'list, data, new, create, edit, update, delete',
 
 		
 	)

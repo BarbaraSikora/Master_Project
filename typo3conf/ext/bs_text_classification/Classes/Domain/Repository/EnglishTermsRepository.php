@@ -27,9 +27,9 @@ namespace TextClassification\BsTextClassification\Domain\Repository;
  ***************************************************************/
 
 /**
- * The repository for Datas
+ * The repository for Terms
  */
-class DataRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
+class EnglishTermsRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
 
     

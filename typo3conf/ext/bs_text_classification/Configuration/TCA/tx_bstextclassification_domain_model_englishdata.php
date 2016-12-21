@@ -1,7 +1,7 @@
 <?php
 return array(
 	'ctrl' => array(
-		'title'	=> 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data',
+		'title'	=> 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishdata',
 		'label' => 'title',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
@@ -20,7 +20,7 @@ return array(
 			'endtime' => 'endtime',
 		),
 		'searchFields' => 'title,description,category,content,date_published,',
-		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('bs_text_classification') . 'Resources/Public/Icons/tx_bstextclassification_domain_model_data.gif'
+		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('bs_text_classification') . 'Resources/Public/Icons/tx_bstextclassification_domain_model_englishdata.gif'
 	),
 	'interface' => array(
 		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, title, description, category, content, date_published',
@@ -57,8 +57,8 @@ return array(
 				'items' => array(
 					array('', 0),
 				),
-				'foreign_table' => 'tx_bstextclassification_domain_model_data',
-				'foreign_table_where' => 'AND tx_bstextclassification_domain_model_data.pid=###CURRENT_PID### AND tx_bstextclassification_domain_model_data.sys_language_uid IN (-1,0)',
+				'foreign_table' => 'tx_bstextclassification_domain_model_englishdata',
+				'foreign_table_where' => 'AND tx_bstextclassification_domain_model_englishdata.pid=###CURRENT_PID### AND tx_bstextclassification_domain_model_englishdata.sys_language_uid IN (-1,0)',
 			),
 		),
 		'l10n_diffsource' => array(
@@ -118,7 +118,7 @@ return array(
 
 		'title' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.title',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishdata.title',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
@@ -127,7 +127,7 @@ return array(
 		),
 		'description' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.description',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishdata.description',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
@@ -136,7 +136,7 @@ return array(
 		),
 		'category' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.category',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishdata.category',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
@@ -145,16 +145,17 @@ return array(
 		),
 		'content' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.content',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishdata.content',
 			'config' => array(
-				'type' => 'input',
-				'size' => 30,
+				'type' => 'text',
+				'cols' => 40,
+				'rows' => 15,
 				'eval' => 'trim'
-			),
+			)
 		),
 		'date_published' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_data.date_published',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishdata.date_published',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,

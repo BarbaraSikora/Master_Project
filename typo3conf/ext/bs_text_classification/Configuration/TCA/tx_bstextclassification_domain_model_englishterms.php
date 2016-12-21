@@ -1,8 +1,8 @@
 <?php
 return array(
 	'ctrl' => array(
-		'title'	=> 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_terms',
-		'label' => 'category',
+		'title'	=> 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishterms',
+		'label' => 'terms',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -19,14 +19,14 @@ return array(
 			'starttime' => 'starttime',
 			'endtime' => 'endtime',
 		),
-		'searchFields' => 'category,title,description,',
-		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('bs_text_classification') . 'Resources/Public/Icons/tx_bstextclassification_domain_model_terms.gif'
+		'searchFields' => 'terms,article_i_d,',
+		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('bs_text_classification') . 'Resources/Public/Icons/tx_bstextclassification_domain_model_englishterms.gif'
 	),
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, category, title, description',
+		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, terms, article_i_d',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, category, title, description, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, terms, article_i_d, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -57,8 +57,8 @@ return array(
 				'items' => array(
 					array('', 0),
 				),
-				'foreign_table' => 'tx_bstextclassification_domain_model_terms',
-				'foreign_table_where' => 'AND tx_bstextclassification_domain_model_terms.pid=###CURRENT_PID### AND tx_bstextclassification_domain_model_terms.sys_language_uid IN (-1,0)',
+				'foreign_table' => 'tx_bstextclassification_domain_model_englishterms',
+				'foreign_table_where' => 'AND tx_bstextclassification_domain_model_englishterms.pid=###CURRENT_PID### AND tx_bstextclassification_domain_model_englishterms.sys_language_uid IN (-1,0)',
 			),
 		),
 		'l10n_diffsource' => array(
@@ -116,31 +116,31 @@ return array(
 			),
 		),
 
-		'category' => array(
+		'terms' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_terms.category',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishterms.terms',
 			'config' => array(
-				'type' => 'input',
-				'size' => 30,
+				'type' => 'text',
+				'cols' => 40,
+				'rows' => 15,
 				'eval' => 'trim'
-			),
+			)
 		),
-		'title' => array(
+		'article_i_d' => array(
 			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_terms.title',
+			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_englishterms.article_i_d',
 			'config' => array(
-				'type' => 'input',
-				'size' => 30,
-				'eval' => 'trim'
-			),
-		),
-		'description' => array(
-			'exclude' => 1,
-			'label' => 'LLL:EXT:bs_text_classification/Resources/Private/Language/locallang_db.xlf:tx_bstextclassification_domain_model_terms.description',
-			'config' => array(
-				'type' => 'input',
-				'size' => 30,
-				'eval' => 'trim'
+				'type' => 'inline',
+				'foreign_table' => 'tx_bstextclassification_domain_model_englishdata',
+				'minitems' => 0,
+				'maxitems' => 1,
+				'appearance' => array(
+					'collapseAll' => 0,
+					'levelLinksPosition' => 'top',
+					'showSynchronizationLink' => 1,
+					'showPossibleLocalizationRecords' => 1,
+					'showAllLocalizationLink' => 1
+				),
 			),
 		),
 		

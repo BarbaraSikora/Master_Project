@@ -1,14 +1,13 @@
 #
-# Table structure for table 'tx_bstextclassification_domain_model_terms'
+# Table structure for table 'tx_bstextclassification_domain_model_englishterms'
 #
-CREATE TABLE tx_bstextclassification_domain_model_terms (
+CREATE TABLE tx_bstextclassification_domain_model_englishterms (
 
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
 
-	category varchar(255) DEFAULT '' NOT NULL,
-	title varchar(255) DEFAULT '' NOT NULL,
-	description varchar(255) DEFAULT '' NOT NULL,
+	terms text NOT NULL,
+	article_i_d int(11) unsigned DEFAULT '0',
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
@@ -40,9 +39,9 @@ CREATE TABLE tx_bstextclassification_domain_model_terms (
 );
 
 #
-# Table structure for table 'tx_bstextclassification_domain_model_data'
+# Table structure for table 'tx_bstextclassification_domain_model_englishdata'
 #
-CREATE TABLE tx_bstextclassification_domain_model_data (
+CREATE TABLE tx_bstextclassification_domain_model_englishdata (
 
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
@@ -50,7 +49,7 @@ CREATE TABLE tx_bstextclassification_domain_model_data (
 	title varchar(255) DEFAULT '' NOT NULL,
 	description varchar(255) DEFAULT '' NOT NULL,
 	category varchar(255) DEFAULT '' NOT NULL,
-	content varchar(255) DEFAULT '' NOT NULL,
+	content text NOT NULL,
 	date_published varchar(255) DEFAULT '' NOT NULL,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,

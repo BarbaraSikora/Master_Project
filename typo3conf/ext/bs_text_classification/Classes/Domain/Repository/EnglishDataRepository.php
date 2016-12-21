@@ -1,7 +1,6 @@
 <?php
 namespace TextClassification\BsTextClassification\Domain\Repository;
 
-
 /***************************************************************
  *
  *  Copyright notice
@@ -28,9 +27,9 @@ namespace TextClassification\BsTextClassification\Domain\Repository;
  ***************************************************************/
 
 /**
- * The repository for Terms
+ * The repository for Datas
  */
-class TermsRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
+class EnglishDataRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
 
     

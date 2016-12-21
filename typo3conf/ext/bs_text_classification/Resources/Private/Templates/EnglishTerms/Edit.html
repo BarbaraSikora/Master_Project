@@ -13,14 +13,14 @@ in /Configuration/ExtensionBuilder/settings.yaml:
 Otherwise your changes will be overwritten the next time you save the extension in the extension builder
 
 <f:section name="main">
-<h1>Edit Data</h1>
+<h1>Edit EnglishTerms</h1>
 
 <f:flashMessages />
 
-<f:render partial="FormErrors" arguments="{object:Data}" />
+<f:render partial="FormErrors" arguments="{object:EnglishTerms}" />
 
-<f:form action="update" name="data" object="{data}" >
-<f:render partial="Data/FormFields" arguments="{data:data}" />
+<f:form action="update" name="englishTerms" object="{englishTerms}" >
+<f:render partial="EnglishTerms/FormFields" arguments="{englishTerms:englishTerms}" />
 	<f:form.submit value="Save" />
 </f:form>
 </f:section>

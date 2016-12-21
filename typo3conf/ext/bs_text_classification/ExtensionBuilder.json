@@ -12,17 +12,17 @@
                 "actionGroup": {
                     "_default0_list": true,
                     "_default1_show": false,
-                    "_default2_new_create": false,
-                    "_default3_edit_update": false,
-                    "_default4_delete": false,
+                    "_default2_new_create": true,
+                    "_default3_edit_update": true,
+                    "_default4_delete": true,
                     "customActions": []
                 },
-                "name": "Terms",
+                "name": "EnglishTerms",
                 "objectsettings": {
                     "addDeletedField": true,
                     "addHiddenField": true,
                     "addStarttimeEndtimeFields": true,
-                    "aggregateRoot": false,
+                    "aggregateRoot": true,
                     "categorizable": false,
                     "description": "",
                     "mapToTable": "",
@@ -39,42 +39,33 @@
                             "propertyDescription": "",
                             "propertyIsExcludeField": true,
                             "propertyIsRequired": false,
-                            "propertyName": "category",
-                            "propertyType": "String",
-                            "uid": "807826446645"
-                        },
-                        {
-                            "allowedFileTypes": "",
-                            "maxItems": "1",
-                            "propertyDescription": "",
-                            "propertyIsExcludeField": true,
-                            "propertyIsRequired": false,
-                            "propertyName": "title",
-                            "propertyType": "String",
-                            "uid": "979413828026"
-                        },
-                        {
-                            "allowedFileTypes": "",
-                            "maxItems": "1",
-                            "propertyDescription": "",
-                            "propertyIsExcludeField": true,
-                            "propertyIsRequired": false,
-                            "propertyName": "description",
-                            "propertyType": "String",
-                            "uid": "786611776844"
+                            "propertyName": "terms",
+                            "propertyType": "Text",
+                            "uid": "202122713186"
                         }
                     ]
                 },
                 "relationGroup": {
-                    "relations": []
+                    "relations": [
+                        {
+                            "foreignRelationClass": "",
+                            "lazyLoading": false,
+                            "propertyIsExcludeField": true,
+                            "relationDescription": "Connection to article",
+                            "relationName": "articleID",
+                            "relationType": "zeroToOne",
+                            "relationWire": "[wired]",
+                            "uid": "1305450614113"
+                        }
+                    ]
                 }
             }
         },
         {
             "config": {
                 "position": [
-                    191,
-                    204
+                    200,
+                    149
                 ]
             },
             "name": "New Model Object",
@@ -87,7 +78,7 @@
                     "_default4_delete": true,
                     "customActions": []
                 },
-                "name": "Data",
+                "name": "EnglishData",
                 "objectsettings": {
                     "addDeletedField": true,
                     "addHiddenField": true,
@@ -140,7 +131,7 @@
                             "propertyIsExcludeField": true,
                             "propertyIsRequired": false,
                             "propertyName": "content",
-                            "propertyType": "String",
+                            "propertyType": "Text",
                             "uid": "328824430871"
                         },
                         {
@@ -201,9 +192,22 @@
         ],
         "vendorName": "TextClassification"
     },
-    "wires": [],
+    "wires": [
+        {
+            "src": {
+                "moduleId": 0,
+                "terminal": "relationWire_0",
+                "uid": "1305450614113"
+            },
+            "tgt": {
+                "moduleId": 1,
+                "terminal": "SOURCES",
+                "uid": "953096798837"
+            }
+        }
+    ],
     "log": {
-        "last_modified": "2016-12-17 03:56",
+        "last_modified": "2016-12-18 08:28",
         "extension_builder_version": "7.6.0",
         "be_user": " (1)"
     }

@@ -29,91 +29,63 @@ namespace TextClassification\BsTextClassification\Domain\Model;
 /**
  * Terms
  */
-class Terms extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class EnglishTerms extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
 
     /**
-     * category
+     * terms
      * 
      * @var string
      */
-    protected $category = '';
+    protected $terms = '';
     
     /**
-     * title
+     * Connection to article
      * 
-     * @var string
+     * @var \TextClassification\BsTextClassification\Domain\Model\EnglishData
      */
-    protected $title = '';
+    protected $articleID = null;
     
     /**
-     * description
+     * Returns the terms
      * 
-     * @var string
+     * @return string $terms
      */
-    protected $description = '';
-    
-    /**
-     * Returns the category
-     * 
-     * @return string $category
-     */
-    public function getCategory()
+    public function getTerms()
     {
-        return $this->category;
+        return $this->terms;
     }
     
     /**
-     * Sets the category
+     * Sets the terms
      * 
-     * @param string $category
+     * @param string $terms
      * @return void
      */
-    public function setCategory($category)
+    public function setTerms($terms)
     {
-        $this->category = $category;
+        $this->terms = $terms;
     }
     
     /**
-     * Returns the title
+     * Returns the articleID
      * 
-     * @return string $title
+     * @return \TextClassification\BsTextClassification\Domain\Model\EnglishData $articleID
      */
-    public function getTitle()
+    public function getArticleID()
     {
-        return $this->title;
+        return $this->articleID;
     }
     
     /**
-     * Sets the title
+     * Sets the articleID
      * 
-     * @param string $title
+     * @param \TextClassification\BsTextClassification\Domain\Model\EnglishData $articleID
      * @return void
      */
-    public function setTitle($title)
+    public function setArticleID(\TextClassification\BsTextClassification\Domain\Model\EnglishData $articleID)
     {
-        $this->title = $title;
-    }
-    
-    /**
-     * Returns the description
-     * 
-     * @return string $description
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-    
-    /**
-     * Sets the description
-     * 
-     * @param string $description
-     * @return void
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
+        $this->articleID = $articleID;
     }
 
 }

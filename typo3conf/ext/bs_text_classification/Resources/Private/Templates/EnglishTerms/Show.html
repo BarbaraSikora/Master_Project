@@ -1,0 +1,31 @@
+
+<f:layout name="Default" />
+
+
+<f:section name="main">
+<h1>EnglishTerms</h1>
+
+<f:flashMessages />
+
+
+	<f:link.action action="list">Back to Overview</f:link.action>
+
+
+		<table  class="tx_bstextclassification" >
+			<tr>
+				<th><f:translate key="tx_bstextclassification_domain_model_englishterms.terms" /></th>
+				<th> <f:translate key="tx_bstextclassification_domain_model_englishterms.article_i_d" /></th>
+			</tr>
+
+			<f:for each="{datas}" as="data">
+				<tr>
+					<td> {data.terms}</td>
+					<td> {data.articleID}</td>
+					<f:comment><td><f:link.action action="edit" arguments="{data : data}">Edit</f:link.action></td>
+					<td><f:link.action action="delete" arguments="{data : data}">Delete</f:link.action></td></f:comment>
+				</tr>
+			</f:for>
+		</table>
+
+
+</f:section>

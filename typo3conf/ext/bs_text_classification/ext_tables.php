@@ -11,8 +11,8 @@ if (!defined('TYPO3_MODE')) {
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'TextClassification Module');
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_bstextclassification_domain_model_terms', 'EXT:bs_text_classification/Resources/Private/Language/locallang_csh_tx_bstextclassification_domain_model_terms.xlf');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_bstextclassification_domain_model_terms');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_bstextclassification_domain_model_englishterms', 'EXT:bs_text_classification/Resources/Private/Language/locallang_csh_tx_bstextclassification_domain_model_englishterms.xlf');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_bstextclassification_domain_model_englishterms');
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_bstextclassification_domain_model_data', 'EXT:bs_text_classification/Resources/Private/Language/locallang_csh_tx_bstextclassification_domain_model_data.xlf');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_bstextclassification_domain_model_data');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_bstextclassification_domain_model_englishdata', 'EXT:bs_text_classification/Resources/Private/Language/locallang_csh_tx_bstextclassification_domain_model_englishdata.xlf');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_bstextclassification_domain_model_englishdata');

@@ -29,7 +29,7 @@ namespace TextClassification\BsTextClassification\Domain\Model;
 /**
  * Data
  */
-class Data extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class EnglishData extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
 
     /**

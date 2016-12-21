@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2016-12-17T15:56:44Z" product-name="bs_text_classification">
+	<file source-language="en" datatype="plaintext" original="messages" date="2016-12-18T20:28:56Z" product-name="bs_text_classification">
 		<header/>
 		<body>
-			<trans-unit id="tx_bstextclassification_domain_model_terms">
+			<trans-unit id="tx_bstextclassification_domain_model_englishterms">
+				<source>English Terms</source>
+			</trans-unit>
+			<trans-unit id="tx_bstextclassification_domain_model_englishterms.terms">
 				<source>Terms</source>
 			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_terms.category">
-				<source>Category</source>
+			<trans-unit id="tx_bstextclassification_domain_model_englishterms.article_i_d">
+				<source>Article I D</source>
 			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_terms.title">
+			<trans-unit id="tx_bstextclassification_domain_model_englishdata">
+				<source>English Data</source>
+			</trans-unit>
+			<trans-unit id="tx_bstextclassification_domain_model_englishdata.title">
 				<source>Title</source>
 			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_terms.description">
+			<trans-unit id="tx_bstextclassification_domain_model_englishdata.description">
 				<source>Description</source>
 			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_data">
-				<source>Data</source>
-			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_data.title">
-				<source>Title</source>
-			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_data.description">
-				<source>Description</source>
-			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_data.category">
+			<trans-unit id="tx_bstextclassification_domain_model_englishdata.category">
 				<source>Category</source>
 			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_data.content">
+			<trans-unit id="tx_bstextclassification_domain_model_englishdata.content">
 				<source>Content</source>
 			</trans-unit>
-			<trans-unit id="tx_bstextclassification_domain_model_data.date_published">
+			<trans-unit id="tx_bstextclassification_domain_model_englishdata.date_published">
 				<source>Date Published</source>
 			</trans-unit>
 		</body>

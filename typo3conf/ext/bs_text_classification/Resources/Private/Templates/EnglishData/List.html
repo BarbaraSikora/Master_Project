@@ -1,0 +1,43 @@
+
+<f:layout name="Default" />
+
+
+<f:section name="main">
+	<h1>Listing the English Data</h1>
+
+	<f:flashMessages />
+
+	<table  class="tx_bstextclassification" >
+		<tr>
+			<th>ID</th>
+			<th><f:translate key="tx_bstextclassification_domain_model_englishdata.title" /></th>
+			<th><f:translate key="tx_bstextclassification_domain_model_englishdata.description" /></th>
+			<th><f:translate key="tx_bstextclassification_domain_model_englishdata.category" /></th>
+			<th><f:translate key="tx_bstextclassification_domain_model_englishdata.date_published" /></th>
+			<th><f:translate key="tx_bstextclassification_domain_model_englishdata.content" /></th>
+			<th> </th>
+			<th> </th>
+		</tr>
+
+		<f:for each="{datas}" as="data">
+			<tr>
+				<td>{data.uid}</td>
+				<td>{data.title}</td>
+				<td>{data.description}</td>
+				<td> {data.category}</td>
+				<td> {data.datePublished}</td>
+				<td>{data.content}</td>
+				<f:comment><td><f:link.action action="edit" arguments="{data : data}">Edit</f:link.action></td>
+					<td><f:link.action action="delete" arguments="{data : data}">Delete</f:link.action></td></f:comment>
+			</tr>
+		</f:for>
+	</table>
+	<f:comment>{datas}
+	</f:comment>
+
+	<f:if condition="{datas->f:count()}==0">
+
+	</f:if><f:link.action action="data">Get Data From Source</f:link.action>
+
+
+</f:section>
