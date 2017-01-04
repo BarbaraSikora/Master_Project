@@ -65,7 +65,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
      */
     public function dataAction()
     {
-        // $help = new \TextClassification\BsTextClassification\Classes\AdditionalHelper\Helper();
         //get Data from guardian
         $url_ENG = 'https://www.theguardian.com/international';
         // get LINKS of Categories
@@ -79,7 +78,7 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
             $categoryLinks[] = "{$node->nodeValue}";
         }
 
-              for ($i = 12; $i < 13; $i++) {
+              for ($i = 12; $i <13; $i++) {
                     //get Article-Links of each category
                     $url_ENG = $categoryLinks[$i];
                     $firstCategory = explode('/', $url_ENG);
@@ -88,7 +87,7 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
                         $firstCategory = "opinion";
                     }
                     $links = array();
-                    $links = $this->help->getAllLinks($url_ENG . '/all', $links, $doc);
+                    $links = $this->help->getAllLinks($url_ENG . '?page=7', $links, $doc);
 
                       foreach ($links as $link) {
                             $text = $this->help->getData($link);
@@ -126,17 +125,17 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 
                      }
          }
-        /*   print "<pre>";
-             print_r($links);
-             print "</pre>";*/
+        print "<pre>";
+        print_r($links);
+        print "</pre>";
 
-        $this->redirect('list');
+       // $this->redirect('list');
     }
 
     /**
      * action list
      *
-     * @param TextClassification\BsTextClassification\Domain\Model\EnglishEnglishData
+     * @param TextClassification\BsTextClassification\Domain\Model\EnglishData
      * @return void
      */
     public function listAction()
@@ -148,7 +147,7 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     /**
      * action new
      *
-     * @param TextClassification\BsTextClassification\Domain\Model\EnglishEnglishData
+     * @param TextClassification\BsTextClassification\Domain\Model\EnglishData
      * @return void
      */
     public function newAction($d,$terms)
@@ -166,7 +165,7 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     /**
      * action create
      *
-     * @param TextClassification\BsTextClassification\Domain\Model\EnglishEnglishData
+     * @param TextClassification\BsTextClassification\Domain\Model\EnglishData
      * @return void
      */
     public function createAction(\TextClassification\BsTextClassification\Domain\Model\EnglishData $newEnglishData)
@@ -178,7 +177,7 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     /**
      * action edit
      *
-     * @param TextClassification\BsTextClassification\Domain\Model\EnglishEnglishData
+     * @param TextClassification\BsTextClassification\Domain\Model\EnglishData
      * @ignorevalidation $englishData
      * @return void
      */
@@ -190,20 +189,19 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     /**
      * action update
      *
-     * @param TextClassification\BsTextClassification\Domain\Model\EnglishEnglishData
+     * @param TextClassification\BsTextClassification\Domain\Model\EnglishData
      * @return void
      */
     public function updateAction(\TextClassification\BsTextClassification\Domain\Model\EnglishData $englishData)
     {
-        $this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->englishDataRepository->update($englishData);
-        $this->redirect('list');
+       // $this->redirect('list');
     }
 
     /**
      * action delete
      *
-     * @param TextClassification\BsTextClassification\Domain\Model\EnglishEnglishData
+     * @param TextClassification\BsTextClassification\Domain\Model\EnglishData
      * @return void
      */
     public function deleteAction(\TextClassification\BsTextClassification\Domain\Model\EnglishData $englishData)

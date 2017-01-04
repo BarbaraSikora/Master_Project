@@ -46,13 +46,13 @@ class CosineSimilarity implements SimilarityInterface, DistanceInterface
     {
         // This means they are simple text vectors
         // so we need to count to make them vectors
-        if (is_int(key($A)))
+     /*   if (is_int(key($A)))
             $v1 = array_count_values($A);
-        else
+        else*/
             $v1 = &$A;
-        if (is_int(key($B)))
+     /*   if (is_int(key($B)))
             $v2 = array_count_values($B);
-        else
+        else*/
             $v2 = &$B;
 
         $prod = 0.0;
@@ -64,16 +64,16 @@ class CosineSimilarity implements SimilarityInterface, DistanceInterface
             $v1_norm += $xi*$xi;
         }
         $v1_norm = sqrt($v1_norm);
-        if ($v1_norm==0)
-            throw new \InvalidArgumentException("Vector \$A is the zero vector");
+       /* if ($v1_norm==0)
+            throw new \InvalidArgumentException("Vector \$A is the zero vector");*/
 
         $v2_norm = 0.0;
         foreach ($v2 as $i=>$xi) {
             $v2_norm += $xi*$xi;
         }
         $v2_norm = sqrt($v2_norm);
-        if ($v2_norm==0)
-            throw new \InvalidArgumentException("Vector \$B is the zero vector");
+      /*  if ($v2_norm==0)
+            throw new \InvalidArgumentException("Vector \$B is the zero vector");*/
 
         return $prod/($v1_norm*$v2_norm);
     }

@@ -4,6 +4,7 @@ namespace TextClassification\BsTextClassification\Controller;
 use TextClassification\BsTextClassification\Classes\AdditionalHelper\KNearestNeighbours;
 use TextClassification\BsTextClassification\Domain\Model\EnglishTerms;
 use TextClassification\BsTextClassification\Domain\Repository\EnglishTermsRepository;
+use NlpTools\Similarity\CosineSimilarity;
 /***************************************************************
  *
  *  Copyright notice
@@ -34,6 +35,13 @@ use TextClassification\BsTextClassification\Domain\Repository\EnglishTermsReposi
  */
 class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
+    /**
+     * help
+     *
+     * @var \TextClassification\BsTextClassification\Classes\AdditionalHelper\Helper
+     * @inject
+     */
+    protected $help = null;
 
     /**
      * englishTermsRepository
@@ -52,7 +60,14 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     public function listAction()
     {
         $terms = $this->englishTermsRepository->findAll();
-        $this->view->assign('datas', count($terms));
+       /* foreach($terms as $term){
+            $string = $term->getArticleID()->getContent();
+            $newArray= $this->help->preprocessingData($string);
+            $term->setTerms(implode(" ",$newArray));
+            $this->updateAction($term);
+        }*/
+       // $terms = $this->englishTermsRepository->findAll();
+        $this->view->assign('datas',count($terms));
     }
 
     /**
@@ -74,16 +89,51 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
      */
     public function knnAction()
     {
-        $val = 0;
-        $data = $this->englishTermsRepository->findAll();
-        $knn = new KNearestNeighbours($data);
-        $val = $knn->getDataVectors();
-        $data = "inProgress";
+        $dataTerms = $this->englishTermsRepository->findAll();
+        //$testID = 57;
+        $knn = new KNearestNeighbours();
+        $knn->startKnn($dataTerms);
+        $testData = $knn->getTestData();
 
-        print "<pre>";
-       // print_r($val[1]);
-        print "</pre>";
-        $this->view->assign('data', $val[0]);
+        $sim = new CosineSimilarity();
+        $right  = 0;
+
+        foreach(array_slice($testData,0,count($testData),true) as $key => $test){
+            $categories=[];
+
+            $cat=strtolower($dataTerms[$key]->getArticleID()->getCategory());
+            $data = $knn->cosineSim($key,$sim);
+            arsort($data);
+
+                     $topTen = array_slice($data,0,10,true);
+
+
+                     foreach ($topTen as $k =>$value) {
+                         $a=explode(" ",$dataTerms[$k]->getArticleID()->getCategory());
+                         $categories[] = $a[0];
+                     }
+
+                     $countCat = array_count_values($categories);
+                     arsort($countCat);
+                     $predictedCat = current(array_keys($countCat));
+
+                     if (strpos($cat, $predictedCat) !== false) {
+                         $right = $right +1;
+                     }
+        }
+
+        $percentage = $right;
+      /*  print_r("<pre>");
+        print_r($testData);
+        print_r("</pre>");*/
+        //print_r($dataTerms[$testID]->getArticleID()->getCatgeory());
+
+
+     //$val = $knn->getDataVectors();
+
+
+
+        $this->view->assign('data',$percentage );
 
 
     }
@@ -135,9 +185,9 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
      */
     public function updateAction(\TextClassification\BsTextClassification\Domain\Model\EnglishTerms $englishTerms)
     {
-        $this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
+        //$this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->englishTermsRepository->update($englishTerms);
-        $this->redirect('list');
+        //$this->redirect('list');
     }
     
     /**

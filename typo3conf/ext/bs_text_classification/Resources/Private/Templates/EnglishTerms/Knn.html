@@ -4,11 +4,12 @@
 <f:section name="main">
 
     <f:link.action action="list">Back to Overview</f:link.action>
-    {data}
 
-        <f:for each="{data}" as="w" key="key">
-                <p>{key}----{w}</p>
-        </f:for>
+
+     {data}
+    <f:comment><f:for each="{data}" as="d" key="k">
+        <p>{k} ----- {d}</p>
+    </f:for></f:comment>
 
 
 </f:section>

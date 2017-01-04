@@ -88,21 +88,49 @@ class Helper
         $array = $wtok->tokenize($string);
 
         $stop = new StopWords($this->stopwordsENG);
-        $stem = new PorterStemmer();
+        //$stem = new PorterStemmer();
 
         foreach ($array as $key => $value) {
             $array[$key] = $stop->transform($value);
            // $array[$key] = $stem->transform($value);
         }
 
+        //leere arrayplätze eliminieren
         $array = array_filter($array);
-        $array = array_unique($array);
+        //$array = array_unique($array);
+
+        //durchnummerieren
         $array = array_values($array);
 
         // $array = $stem->stemAll($array);
         return $array;
     }
 
+
+    public function stemTerms($array){
+
+        $stem = new PorterStemmer();
+        foreach ($array as $key => $value) {
+            $array[$key] = $stem->transform($value);
+        }
+
+        return $array;
+    }
+
+    function shuffle_assoc(&$array) {
+        $keys = array_keys($array);
+
+        srand(1000);
+        shuffle($keys);
+
+        foreach($keys as $key) {
+            $new[$key] = $array[$key];
+        }
+
+        $array = $new;
+
+        return true;
+    }
 
     /**
      * action getNodeList of query
@@ -125,31 +153,29 @@ class Helper
      */
     public function getAllLinks($url,$array,$doc)
     {
-        if(count($array) < 50){
-        $text = $this->getData($url);
-        $doc->loadHTML($text);
-        $attr = "article";
-        $nodelist = $this->getNodeList("//section//ul//a[contains(@data-link-name, '$attr')]/@href",$doc);
-        foreach ($nodelist as $node) {
-            $array[] =  "{$node->nodeValue}";
-        }
-        $array = array_unique($array);
-        foreach($array as $key => $one) {
-            if(strpos($one, 'video') !== false || strpos($one, 'audio') !== false || strpos($one, 'picture') !== false || strpos($one, 'live') !== false || strpos($one, 'gallery') !== false)
-                unset($array[$key]);
-        }
-        $array = array_values($array);
+        //if(count($array) < 50){
+            $text = $this->getData($url);
+            $doc->loadHTML($text);
+            $attr = "article";
+            $nodelist = $this->getNodeList("//section//ul//a[contains(@data-link-name, '$attr')]/@href",$doc);
+            foreach ($nodelist as $node) {
+                $array[] =  "{$node->nodeValue}";
+            }
+            $array = array_unique($array);
+            foreach($array as $key => $one) {
+                if(strpos($one, 'video') !== false || strpos($one, 'audio') !== false || strpos($one, 'picture') !== false || strpos($one, 'live') !== false || strpos($one, 'gallery') !== false)
+                    unset($array[$key]);
+            }
+            $array = array_values($array);
 
-        $attr="next";
-        $next = $this->getNodeList("//div//a[contains(@rel, '$attr')]/@href",$doc);
-        $next = $next[0]->nodeValue;
+         /*   $attr="next";
+            $next = $this->getNodeList("//div//a[contains(@rel, '$attr')]/@href",$doc);
+            $next = $next[0]->nodeValue;
 
-        $array = $this->getAllLinks($next,$array,$doc);
-        }
+            $array = $this->getAllLinks($next,$array,$doc);*/
+     //   }
         return $array;
     }
-
-
 
 
 }

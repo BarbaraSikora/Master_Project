@@ -12,6 +12,8 @@ include('C:\xampp\htdocs\Master_Project\typo3conf\ext\bs_text_classification\Res
 use NlpTools\Analysis\Idf;
 use NlpTools\Documents\TokensDocument;
 use NlpTools\Documents\TrainingSet;
+use NlpTools\Similarity\CosineSimilarity;
+use NlpTools\Similarity\Euclidean;
 use NlpTools\Utils\Normalizers\English;
 use TextClassification\BsTextClassification\Domain\Model\EnglishTerms;
 
@@ -19,43 +21,109 @@ class KNearestNeighbours
 {
 
     protected $dataTerms = null;
+
+
     protected $trainingsData = null;
+
+
     protected $testData = null;
     protected $dataVectors = null;
+    protected $training = null;
+    protected $testing = null;
 
     /**
-     * @return null
+     * @return array
      */
     public function getDataVectors()
     {
         return $this->dataVectors;
     }
 
+    /**
+     * @return null
+     */
+    public function getTestData()
+    {
+        return $this->testData;
+    }
 
-
-
-    function __construct($data) {
+    public function startKnn($data){
         $this->dataTerms = $data;
         $count = count($data);
-        $training = $count*0.67;
-        $testing = $count*0.33;
+        $help = new Helper();
+        $this->training = ceil($count*0.67);
+        $this->testing = floor($count*0.33);
 
-        //TRAININGS SET MUSS STRUKTUR HABEN!
+        $this->dataVectors= $this->tfidf();
+        $help->shuffle_assoc($this->dataVectors);
+
+        $this->trainingsData = array_slice($this->dataVectors, 0,$this->training,true);
+        $this->testData = array_slice($this->dataVectors, $this->training,$this->testing,true);
+
+      /*  print_r("<pre>");
+        print_r($this->testData);
+        print_r("</pre>");*/
+    }
+
+     function norm(array $vector) {
+        return sqrt($this->dotProduct($vector, $vector));
+    }
+
+     function dotProduct(array $a, array $b) {
+        $dotProduct = 0;
+        // to speed up the process, use keys with non-empty values
+        $keysA = array_keys(array_filter($a));
+        $keysB = array_keys(array_filter($b));
+        $uniqueKeys = array_unique(array_merge($keysA, $keysB));
+        foreach ($uniqueKeys as $key) {
+            if (!empty($a[$key]) && !empty($b[$key]))
+                $dotProduct += ($a[$key] * $b[$key]);
+        }
+        return $dotProduct;
+    }
+
+    public function cosinus(array $a, array $b) {
+        $normA = $this->norm($a);
+        $normB = $this->norm($b);
+        return (($normA * $normB) != 0)
+            ? $this->dotProduct($a, $b) / ($normA * $normB)
+            : 0;
+    }
+
+
+    function cosineSim($testID,$sim){
+        $distances = [];
+      foreach($this->trainingsData as $key => $value){
+            $distances[$key] = $sim->similarity($this->testData[$testID],$this->trainingsData[$key]);
+      }
+        return $distances;
+    }
+
+
+    function tfidf(){
         $trainSet = new TrainingSet();
-        $norm = new English();
+        $help = new Helper();
         foreach($this->dataTerms as $document){
-            $content = $norm->normalize(trim(preg_replace("/[^0-9a-z ]+/i", "",$document->getArticleID()->getContent())));
-
+            $content = $document->getTerms();
+            //remove numbers
+            $content = preg_replace('/[0-9]+/', '', $content);
+            //stemming
+            $array =  explode(" ",$content);
+            $array = $help->stemTerms($array);
+            foreach($array as $k => $v){
+                if(strlen($v) <3){
+                    unset($array[$k]);
+                }
+            }
             $trainSet->addDocument(
-                  "",
-                  new TokensDocument(
-                      explode(" ",$content)
-                  )
-              );
+                "",
+                new TokensDocument(
+                   //explode(" ",$content)
+                    $array
+                )
+            );
 
-       }
-
-
+        }
 
         $allValues = [];
         $idf = new Idf($trainSet);
@@ -69,17 +137,11 @@ class KNearestNeighbours
             )
         );
 
+        for($i = 0; $i <count($trainSet);$i++){
+            $allValues[$i] = $ff->getFeatureArray("", $trainSet[$i]);
+        }
 
-               for($i = 0; $i <count($trainSet);$i++){
-                   $allValues[$i] = $ff->getFeatureArray("", $trainSet[$i]);
-               }
-
-               $this->dataVectors = $allValues;   /**/
-
-        //$idf = new Idf($trainSet);
-       // $this->dataVectors = $idf->offsetGet("world");
-
-
+        return $allValues;
     }
 
     //TO DO :

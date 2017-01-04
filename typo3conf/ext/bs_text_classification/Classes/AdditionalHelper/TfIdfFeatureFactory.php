@@ -28,10 +28,14 @@ class TfIdfFeatureFactory extends FunctionFeatures
 
     public function getFeatureArray($class, DocumentInterface $doc)
     {
+        //TF
         $frequencies = parent::getFeatureArray($class, $doc);
-
+       /* print_r("<pre>");
+        print_r(count($frequencies));
+        print_r("<br>");
+        print_r("</pre>");*/
         foreach ($frequencies as $term=>&$value) {
-            $value = $value*$this->idf[$term];
+            $value = ($value/count($frequencies))*$this->idf[$term];
         }
         return $frequencies;
     }
