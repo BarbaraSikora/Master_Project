@@ -11,20 +11,14 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_ob
 	'TextClassification.' . $_EXTKEY,
 	'Bstextclassification',
 	array(
-		'EnglishTerms' => 'knn, list, show, new, create, edit, update, delete',
-		'EnglishData' => ' list,data, new, create, edit, update, delete',
+		'EnglishTerms' => 'knn, fingerprinting, bayes, list, show, new, create, edit, update, delete',
+		'EnglishData' => ' data, list, new, create, edit, update, delete',
 
-
-
-
-		
 	),
 	// non-cacheable actions
 	array(
-		'EnglishTerms' => 'knn, list, show, new, create, edit, update, delete',
-		'EnglishData' => ' list,data, new, create, edit, update, delete',
+		'EnglishTerms' => 'knn, fingerprinting, bayes, list, show, new, create, edit, update, delete',
+		'EnglishData' => '  data, list, new, create, edit, update, delete',
 
-
-		
 	)
 );

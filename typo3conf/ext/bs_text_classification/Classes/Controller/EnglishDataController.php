@@ -78,54 +78,58 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
             $categoryLinks[] = "{$node->nodeValue}";
         }
 
-              for ($i = 12; $i <13; $i++) {
+              for ($i = 1; $i <2; $i++) {
                     //get Article-Links of each category
                     $url_ENG = $categoryLinks[$i];
+                    $url_ENG = str_replace('uk/', '', $url_ENG);
                     $firstCategory = explode('/', $url_ENG);
                     $firstCategory = $firstCategory[count($firstCategory)-1];
                     if($firstCategory == "commentisfree"){
                         $firstCategory = "opinion";
                     }
+
                     $links = array();
-                    $links = $this->help->getAllLinks($url_ENG . '?page=7', $links, $doc);
+                    $links = $this->help->getAllLinks($url_ENG . '/all', $links, $doc);
 
-                      foreach ($links as $link) {
-                            $text = $this->help->getData($link);
+                   /*   foreach ($links as $link) {
+                              $text = $this->help->getData($link);
 
-                            $doc->loadHTML($text);
-                            $meta = get_meta_tags($link);
-                            $title = $this->help->getEverythingBetweenTags($text, 'title');
-                            $split = preg_split('/\\|+/', $title);
-                            $dataCategory = $firstCategory." ".$split[count($split) - 2];
-                            $dataTitle = $title;
-                            $dataDescription = $meta['description'];
-                            $dataContent = implode(' ', $this->help->pregMatchAll($text, 'p', 'p'));
-                            $attr = 'datePublished';
-                            $dataDate = $this->help->getNodeList("//div//p/time[contains(@itemprop, '{$attr}')]/@datetime", $doc);
-                            $date = $dataDate[0]->nodeValue;
-                            $date = str_replace('T', ' ', $date);
-                            $date = str_replace('+0000', '', $date);
+                              $doc->loadHTML($text);
+                              $meta = get_meta_tags($link);
+                              $title = $this->help->getEverythingBetweenTags($text, 'title');
+                              $split = preg_split('/\\|+/', $title);
+                              $dataCategory = $firstCategory . " " . $split[count($split) - 2];
+                              $dataTitle = $title;
+                              $dataDescription = $meta['description'];
+                              $dataContent = implode(' ', $this->help->pregMatchAll($text, 'p', 'p'));
+                              $attr = 'datePublished';
+                              $dataDate = $this->help->getNodeList("//div//p/time[contains(@itemprop, '{$attr}')]/@datetime", $doc);
+                              $date = $dataDate[0]->nodeValue;
+                              $date = str_replace('T', ' ', $date);
+                              $date = str_replace('+0000', '', $date);
 
-                            // preprocess Data tags weg, stopwords weg leezeichen weg, stemming
-                            $dataContent = strip_tags($dataContent);
-                            $dataContentTerms = $this->help->preprocessingData($dataContent);
+                              // preprocess Data tags weg, stopwords weg leezeichen weg, stemming
+                              $dataContent = strip_tags($dataContent);
+                              $dataContentTerms = $this->help->preprocessingData($dataContent);
 
-                            $data = array(
-                                'datePublished' => $date,
-                                'dataCategory' => $dataCategory,
-                                'dataTitle' => $dataTitle,
-                                'dataDescription' => $dataDescription,
-                                'dataContent' => $dataContent
-                            );
+                              $data = array(
+                                  'datePublished' => $date,
+                                  'dataCategory' => $dataCategory,
+                                  'dataTitle' => $dataTitle,
+                                  'dataDescription' => $dataDescription,
+                                  'dataContent' => $dataContent
+                              );
 
-                            $terms = array(
-                                'terms' => implode(" ",$dataContentTerms)
-                            );
-                            $this->newAction($data,$terms);
+                              $terms = array(
+                                  'terms' => implode(" ", $dataContentTerms)
+                              );
 
-                     }
+                              $this->newAction($data, $terms);
+                      }*/
          }
-        print "<pre>";
+
+       // $this->termsController->listAction();
+       print "<pre>";
         print_r($links);
         print "</pre>";
 
@@ -208,7 +212,7 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     {
         $this->addFlashMessage('The object was deleted. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->englishDataRepository->remove($englishData);
-        $this->redirect('list');
+       // $this->redirect('list');
     }
 
 }

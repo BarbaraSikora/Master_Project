@@ -22,10 +22,7 @@ class KNearestNeighbours
 
     protected $dataTerms = null;
 
-
     protected $trainingsData = null;
-
-
     protected $testData = null;
     protected $dataVectors = null;
     protected $training = null;
@@ -47,6 +44,26 @@ class KNearestNeighbours
         return $this->testData;
     }
 
+
+    /**
+     * @return null
+     */
+    public function getTrainingsData()
+    {
+        return $this->trainingsData;
+    }
+
+
+    /**
+     * @return null
+     */
+    public function getDataTerms()
+    {
+        return $this->dataTerms;
+    }
+
+
+
     public function startKnn($data){
         $this->dataTerms = $data;
         $count = count($data);
@@ -60,65 +77,54 @@ class KNearestNeighbours
         $this->trainingsData = array_slice($this->dataVectors, 0,$this->training,true);
         $this->testData = array_slice($this->dataVectors, $this->training,$this->testing,true);
 
-      /*  print_r("<pre>");
-        print_r($this->testData);
-        print_r("</pre>");*/
     }
 
-     function norm(array $vector) {
-        return sqrt($this->dotProduct($vector, $vector));
-    }
-
-     function dotProduct(array $a, array $b) {
-        $dotProduct = 0;
-        // to speed up the process, use keys with non-empty values
-        $keysA = array_keys(array_filter($a));
-        $keysB = array_keys(array_filter($b));
-        $uniqueKeys = array_unique(array_merge($keysA, $keysB));
-        foreach ($uniqueKeys as $key) {
-            if (!empty($a[$key]) && !empty($b[$key]))
-                $dotProduct += ($a[$key] * $b[$key]);
-        }
-        return $dotProduct;
-    }
-
-    public function cosinus(array $a, array $b) {
-        $normA = $this->norm($a);
-        $normB = $this->norm($b);
-        return (($normA * $normB) != 0)
-            ? $this->dotProduct($a, $b) / ($normA * $normB)
-            : 0;
-    }
 
 
     function cosineSim($testID,$sim){
         $distances = [];
-      foreach($this->trainingsData as $key => $value){
+        /*arsort($this->testData[$testID]);
+        print_r("<pre>");
+        print_r($this->testData[$testID]);
+        print_r("</pre>");*/
+
+     foreach($this->trainingsData as $key => $value){
             $distances[$key] = $sim->similarity($this->testData[$testID],$this->trainingsData[$key]);
       }
+
+        /*print_r("<pre>");
+        print_r($this->trainingsData[8]);
+        print_r("</pre>");*/
+
         return $distances;
+    }
+
+    protected function prepareData($content){
+        $help = new Helper();
+        //remove numbers
+        $content = preg_replace('/[0-9]+/', '', $content);
+        //stemming
+        $array =  explode(" ",$content);
+        $array = $help->stemTerms($array);
+        foreach($array as $k => $v){
+            if(strlen($v) <3 || strlen($v) > 20 ){
+                unset($array[$k]);
+            }
+        }
+        return $array;
     }
 
 
     function tfidf(){
         $trainSet = new TrainingSet();
-        $help = new Helper();
+
         foreach($this->dataTerms as $document){
             $content = $document->getTerms();
-            //remove numbers
-            $content = preg_replace('/[0-9]+/', '', $content);
-            //stemming
-            $array =  explode(" ",$content);
-            $array = $help->stemTerms($array);
-            foreach($array as $k => $v){
-                if(strlen($v) <3){
-                    unset($array[$k]);
-                }
-            }
+            $array = $this->prepareData($content);
+
             $trainSet->addDocument(
                 "",
                 new TokensDocument(
-                   //explode(" ",$content)
                     $array
                 )
             );
@@ -136,21 +142,13 @@ class KNearestNeighbours
                 }
             )
         );
-
-        for($i = 0; $i <count($trainSet);$i++){
-            $allValues[$i] = $ff->getFeatureArray("", $trainSet[$i]);
+        $i = 0;
+        foreach($this->dataTerms as $key => $d){
+            $allValues[$key] = $ff->getFeatureArray("", $trainSet[$i]);
+            $i++;
         }
 
         return $allValues;
     }
-
-    //TO DO :
-    /*
-     * bag of words testen
-     * zufällig trainingsdaten/testdaten zusammenstellen -> array splitten
-     * bag of words testen
-     *
-     *
-     */
 
 }

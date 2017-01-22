@@ -1,0 +1,15 @@
+<f:layout name="Default" />
+
+
+<f:section name="main">
+
+    <f:link.action action="list">Back to Overview</f:link.action>
+
+
+     {data}
+    <f:comment><f:for each="{data}" as="d" key="k">
+        <p>{k} ----- {d}</p>
+    </f:for></f:comment>
+
+
+</f:section>

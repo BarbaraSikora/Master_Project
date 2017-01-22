@@ -9,6 +9,8 @@ namespace TextClassification\BsTextClassification\Classes\AdditionalHelper;
 include('C:\xampp\htdocs\Master_Project\typo3conf\ext\bs_text_classification\Resources\Private\Libraries\php-nlp-tools\autoloader.php');
 use NlpTools\Analysis\FreqDist;
 use NlpTools\Analysis\Idf;
+use NlpTools\Clustering\CentroidFactories\Euclidean;
+use NlpTools\Similarity\CosineSimilarity;
 use NlpTools\Stemmers\LancasterStemmer;
 use NlpTools\Stemmers\PorterStemmer;
 use NlpTools\Tokenizers\PennTreeBankTokenizer;
@@ -153,28 +155,287 @@ class Helper
      */
     public function getAllLinks($url,$array,$doc)
     {
-        //if(count($array) < 50){
+        if(count($array) < 80){
             $text = $this->getData($url);
             $doc->loadHTML($text);
+
             $attr = "article";
-            $nodelist = $this->getNodeList("//section//ul//a[contains(@data-link-name, '$attr')]/@href",$doc);
+            // //section//ul
+            $nodelist = $this->getNodeList("//a[@data-link-name='$attr']/@href",$doc);
             foreach ($nodelist as $node) {
                 $array[] =  "{$node->nodeValue}";
             }
             $array = array_unique($array);
             foreach($array as $key => $one) {
-                if(strpos($one, 'video') !== false || strpos($one, 'audio') !== false || strpos($one, 'picture') !== false || strpos($one, 'live') !== false || strpos($one, 'gallery') !== false)
-                    unset($array[$key]);
+                    if(strpos($one, '/science/') == false || strpos($one, 'video') !== false || strpos($one, 'audio') !== false || strpos($one, 'picture') !== false || strpos($one, 'live') !== false || strpos($one, 'gallery') !== false) {
+                        unset($array[$key]);
+                    }
             }
             $array = array_values($array);
 
-         /*   $attr="next";
-            $next = $this->getNodeList("//div//a[contains(@rel, '$attr')]/@href",$doc);
+            $attr="next";
+            $next = $this->getNodeList("//a[contains(@rel, '$attr')]/@href",$doc);
             $next = $next[0]->nodeValue;
 
-            $array = $this->getAllLinks($next,$array,$doc);*/
-     //   }
+            $array = $this->getAllLinks($next,$array,$doc);
+       }
         return $array;
+    }
+
+    //FILTER DATA
+
+    /**
+     * action filter only big categories
+     *
+     * @return array
+     */
+    public function filterGeneralCategories($array){
+
+        $newArray = [];
+
+        foreach($array as $key => $value){
+            $cat = explode(" ",$value->getArticleID()->getCategory());
+
+            if($cat[0] == "uk-news" || $cat[0] == "world"  || $cat[0] == "sport"  || $cat[0] == "fashion"  || $cat[0] == "football"){
+               $newArray[$key] = $value;
+            }
+        }
+
+
+        return $newArray;
+    }
+
+    /**
+     * action filter only big categories
+     *
+     * @return array
+     */
+    public function filterSpecificCategories($array){
+
+        $newArray = [];
+
+        foreach($array as $key => $value){
+            $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
+          if( $cat == "football" ||$cat == "world news" /*|| $cat == "opinion"  || $cat == "fashion"*/){
+                $newArray[$key] = $value;
+            }
+
+           /* if( $cat == "life and style"  || $cat == "technology"
+                || $cat == "television & radio" || $cat == "film"  ){
+                $newArray[$key] = $value;
+            }*/
+
+          /*  if($cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
+                $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment"  || $cat == "technology"
+                || $cat == "television & radio" || $cat == "film"  || $cat == "music"  || $cat == "us news"  || $cat == "football" || $cat == "fashion"){
+                $newArray[$key] = $value;
+            }*/
+        }
+
+
+        return $newArray;
+    }
+
+    // EXPORT FUNCTIONS
+    public function writeFile($data){
+        $article = $data->getArticleID();
+        $myfile = fopen("data/".$article->getUid().".txt", "w") or die("Unable to open file!");
+        $txt = "Category: ".$article->getCategory()."\r\n\r\n".$article->getContent();
+        fwrite($myfile, $txt);
+        fclose($myfile);
+
+        $myfile2 = fopen("terms/".$article->getUid().".txt", "w") or die("Unable to open file!");
+        $txt2 = "Category: ".$article->getCategory()."\r\n\r\n".$data->getTerms();
+        fwrite($myfile2, $txt2);
+        fclose($myfile2);
+    }
+
+    public function exportGeneralCategory($dataTerms){
+        $partCategories=[];
+        foreach($dataTerms as $key => $term){
+            $secndPart = explode(" ",$term->getArticleID()->getCategory())[0];
+            if(isset($partCategories[$secndPart])){
+
+                $partCategories[$secndPart][1]++;
+                $partCategories[$secndPart][3] = $partCategories[$secndPart][3].$key."|";
+                $partCategories[$secndPart][2] = $partCategories[$secndPart][2].$term->getArticleID()->getUid()."|" ;
+            }else{
+                $partCategories[$secndPart][0] = $secndPart;
+                $partCategories[$secndPart][1] = 1;
+                $partCategories[$secndPart][2] =$term->getArticleID()->getUid()."|" ;
+                $partCategories[$secndPart][3] =$key."|" ;
+            }
+        }
+
+        $fp = fopen('generalCategories_02.csv', 'w');
+
+        foreach ($partCategories as $fields) {
+            print_r(fputcsv($fp, $fields));
+            print_r("<br>");
+        }
+
+        fclose($fp);
+
+    }
+
+    public function exportCategories($dataTerms){
+        $partCategories=[];
+        foreach($dataTerms as $key => $term){
+            $secndPart = strstr($term->getArticleID()->getCategory(), ' ');
+            if(isset($partCategories[$secndPart])){
+
+                $partCategories[$secndPart][1]++;
+                $partCategories[$secndPart][3] = $partCategories[$secndPart][3].$key."|";
+                $partCategories[$secndPart][2] = $partCategories[$secndPart][2].$term->getArticleID()->getUid()."|" ;
+            }else{
+                $partCategories[$secndPart][0] = $secndPart;
+                $partCategories[$secndPart][1] = 1;
+                $partCategories[$secndPart][2] =$term->getArticleID()->getUid()."|" ;
+                $partCategories[$secndPart][3] =$key."|" ;
+            }
+        }
+
+        $fp = fopen('partTestCategories_03.csv', 'w');
+
+        foreach ($partCategories as $fields) {
+            print_r(fputcsv($fp, $fields));
+            print_r("<br>");
+        }
+
+        fclose($fp);
+
+    }
+
+    public function exportExactCatgeory($dataTerms){
+
+        $allCatgegories = [];
+        foreach($dataTerms as $key => $term){
+            if(isset($allCatgegories[$term->getArticleID()->getCategory()])){
+
+                $allCatgegories[$term->getArticleID()->getCategory()][1]++;
+                $allCatgegories[$term->getArticleID()->getCategory()][3] = $allCatgegories[$term->getArticleID()->getCategory()][3].$key."|";
+                $allCatgegories[$term->getArticleID()->getCategory()][2] = $allCatgegories[$term->getArticleID()->getCategory()][2].$term->getArticleID()->getUid()."|" ;
+            }else{
+                $allCatgegories[$term->getArticleID()->getCategory()][0] = $term->getArticleID()->getCategory();
+                $allCatgegories[$term->getArticleID()->getCategory()][1] = 1;
+                $allCatgegories[$term->getArticleID()->getCategory()][2] =$term->getArticleID()->getUid()."|" ;
+                $allCatgegories[$term->getArticleID()->getCategory()][3] =$key."|" ;
+            }
+
+        }
+
+        $fp = fopen('allCatgegories_02.csv', 'w');
+
+        foreach ($allCatgegories as $fields) {
+            print_r(fputcsv($fp, $fields));
+            print_r("<br>");
+        }
+        fclose($fp);
+
+    }
+
+    public function exportComparisonTwoFiles($knn){
+        $dataVector = $knn->getDataVectors();
+        $dataTerms = $knn->getDataTerms();
+        $sim = new CosineSimilarity();
+
+        $id1=rand(0,731);
+        $id2 =rand(0,731);
+        $a = $dataVector[$id1];
+        $b = $dataVector[$id2];
+        $similarity = $sim->similarity($a,$b);
+        ksort($a);
+        ksort($b);
+        $a=array_keys($a);
+        $b=array_keys($b);
+
+
+        $distances[0][0] ="Document 1";
+        $distances[0][1] ="Document 2";
+        $distances[0][2] ="Similarity";
+
+
+       $distances[0][3] ="Words1";
+       for($i = 1; $i< count($a)+1;$i++){
+           $distances[$i][0] = "";
+           $distances[$i][1] = "";
+           $distances[$i][2] = "";
+           $distances[$i][3]=$a[$i];
+       }
+
+       $distances[0][4] ="Words2";
+       for($i = 1; $i< count($b)+1;$i++){
+           $distances[$i][0] = "";
+           $distances[$i][1] = "";
+           $distances[$i][2] = "";
+           $distances[$i][4]=$b[$i];
+       }
+
+       $distances[1][0] = $dataTerms[$id1]->getArticleID()->getUid();
+       $distances[2][0] = $dataTerms[$id1]->getArticleID()->getCategory();
+       $distances[1][1] = $dataTerms[$id2]->getArticleID()->getUid();
+       $distances[2][1] = $dataTerms[$id2]->getArticleID()->getCategory();
+       $distances[1][2] =$similarity;
+
+        $fp = fopen('file01.csv', 'w');
+
+        foreach ($distances as $fields) {
+            print_r(fputcsv($fp, $fields));
+            print_r("<br>");
+        }
+
+        fclose($fp);
+
+    }
+
+    public function exportMDS($knn){
+
+        $dataVector = $knn->getDataVectors();
+        $dataTerms = $knn->getDataTerms();
+        $sim = new CosineSimilarity();
+        $distances = [];
+
+        $distances[0][0] = "docID";
+        foreach(array_slice($dataVector,0,count($dataVector),true) as $k1 => $v1){
+           // $cat1 = explode(" ",$dataTerms[$k1]->getArticleID()->getCategory());
+            $cat1=trim(strtolower(strstr($dataTerms[$k1]->getArticleID()->getCategory(), ' ')));
+            //$id = $dataTerms[$k1]->getArticleID()->getUid();
+            $distances[$k1+1][0]= $cat1;
+            foreach(array_slice($dataVector,0,count($dataVector),true) as $k2 => $v2){
+                // $cat2 = explode(" ",$dataTerms[$k2]->getArticleID()->getCategory());
+                $cat2=trim(strtolower(strstr($dataTerms[$k2]->getArticleID()->getCategory(), ' ')));
+               // $id2 = $dataTerms[$k2]->getArticleID()->getUid();
+                //$distances[0][$k2+1] = $id2;
+                $distances[0][$k2+1] = $cat2;
+                $distances[$k1+1][]= $sim->similarity($dataVector[$k1],$dataVector[$k2]);
+            }
+        }
+
+
+        $fp = fopen('file.csv', 'w');
+
+        foreach ($distances as $fields) {
+            print_r(fputcsv($fp, $fields));
+            print_r("<br>");
+        }
+
+        fclose($fp);
+
+    }
+
+    public function exportFingerprint($category,$array){
+       print("<pre>");
+        print_r( $array);
+        print("</pre>");
+        $fp = fopen('file_finger_testfinger_sorted.csv', 'w');
+
+        //foreach ($array as $fields) {
+             print_r(fputcsv($fp, array_keys($array)));
+            print_r(fputcsv($fp, $array));
+            print_r("<br>");
+       // }
+
+        fclose($fp);
     }
 
 

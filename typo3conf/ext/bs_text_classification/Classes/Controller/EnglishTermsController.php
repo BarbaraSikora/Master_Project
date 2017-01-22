@@ -1,7 +1,10 @@
 <?php
 namespace TextClassification\BsTextClassification\Controller;
 
+use NlpTools\Similarity\Euclidean;
 use TextClassification\BsTextClassification\Classes\AdditionalHelper\KNearestNeighbours;
+use TextClassification\BsTextClassification\Classes\AdditionalHelper\NaiveBayes;
+use TextClassification\BsTextClassification\Classes\AdditionalHelper\SemanticFingerprinting;
 use TextClassification\BsTextClassification\Domain\Model\EnglishTerms;
 use TextClassification\BsTextClassification\Domain\Repository\EnglishTermsRepository;
 use NlpTools\Similarity\CosineSimilarity;
@@ -61,11 +64,13 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     {
         $terms = $this->englishTermsRepository->findAll();
        /* foreach($terms as $term){
-            $string = $term->getArticleID()->getContent();
-            $newArray= $this->help->preprocessingData($string);
-            $term->setTerms(implode(" ",$newArray));
-            $this->updateAction($term);
-        }*/
+            $article = $term;
+            $this->help->writeFile($article);
+          /*  $string = $term->getArticleID()->getContent();
+             $newArray= $this->help->preprocessingData($string);
+             $term->setTerms(implode(" ",$newArray));
+             $this->updateAction($term);*/
+       // }
        // $terms = $this->englishTermsRepository->findAll();
         $this->view->assign('datas',count($terms));
     }
@@ -90,53 +95,295 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     public function knnAction()
     {
         $dataTerms = $this->englishTermsRepository->findAll();
+        $percentage = 0;
+       //$dataTerms = $this->help->filterSpecificCategories($dataTerms);
+
+
         //$testID = 57;
         $knn = new KNearestNeighbours();
         $knn->startKnn($dataTerms);
         $testData = $knn->getTestData();
 
-        $sim = new CosineSimilarity();
-        $right  = 0;
 
-        foreach(array_slice($testData,0,count($testData),true) as $key => $test){
-            $categories=[];
+        print_r("<pre>");
+        print_r(count($dataTerms));
+        print("<br>");
+        print_r(count($testData));
+        print_r("</pre>");
 
-            $cat=strtolower($dataTerms[$key]->getArticleID()->getCategory());
-            $data = $knn->cosineSim($key,$sim);
-            arsort($data);
-
-                     $topTen = array_slice($data,0,10,true);
-
-
-                     foreach ($topTen as $k =>$value) {
-                         $a=explode(" ",$dataTerms[$k]->getArticleID()->getCategory());
-                         $categories[] = $a[0];
-                     }
-
-                     $countCat = array_count_values($categories);
-                     arsort($countCat);
-                     $predictedCat = current(array_keys($countCat));
-
-                     if (strpos($cat, $predictedCat) !== false) {
-                         $right = $right +1;
-                     }
-        }
-
-        $percentage = $right;
-      /*  print_r("<pre>");
-        print_r($testData);
-        print_r("</pre>");*/
-        //print_r($dataTerms[$testID]->getArticleID()->getCatgeory());
+       // $this->help->exportMDS($knn);
+        //$this->help->exportGeneralCategory($dataTerms);
+       // $this->help->exportExactCatgeory($dataTerms);
+       // $this->help->exportCategories($dataTerms);
 
 
-     //$val = $knn->getDataVectors();
-
-
+     $percentage = $this->testKNN($testData,$dataTerms,$knn);
 
         $this->view->assign('data',$percentage );
 
 
     }
+
+    /**
+     * action naive bayes
+     *
+     * @return void
+     */
+    public function bayesAction()
+    {
+        $dataTerms = $this->englishTermsRepository->findAll();
+        $percentage = 0;
+        $dataTerms = $this->help->filterSpecificCategories($dataTerms);
+        $naive = new NaiveBayes();
+        $naive->startNaiveBayes($dataTerms);
+        $testData = $naive->getTestData();
+
+        print_r("<pre>");
+        print_r(count($dataTerms));
+        print("<br>");
+        print_r(count($testData));
+        print_r("</pre>");
+
+
+      /* $cat=strtolower($testData[609][0]);
+       $probabilities =$naive->guess($testData[609][1]);
+        print("<pre>");
+        print_r($probabilities);
+        print("</pre>");
+        print_r($cat);
+        print("<br>");*/
+
+       $percentage = $this->testNaiveBayes($testData,$dataTerms,$naive);
+
+        $this->view->assign('data',$percentage );
+
+    }
+
+    /**
+     * action fingerprinting
+     *
+     * @return void
+     */
+    public function fingerprintingAction()
+    {
+        $dataTerms = $this->englishTermsRepository->findAll();
+        $percentage = 100000;
+        $dataTerms = $this->help->filterSpecificCategories($dataTerms);
+        $fingerprinting = new SemanticFingerprinting();
+        $fingerprinting->startSemanticFingerprinting($dataTerms);
+        $testData = $fingerprinting->getTestData();
+
+     //$cat = $fingerprinting->classify($testData[31]);//31,10,161,72,84 world,world, football,world,world
+
+         print_r("<pre>");
+        //print_r($cat);
+        print("<br>");
+        print_r(count($dataTerms));
+        print("<br>");
+        print_r(count($testData));
+        print_r("</pre>");
+
+
+
+        $percentage = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
+
+        $this->view->assign('data',$percentage );
+
+
+    }
+
+
+
+
+
+
+
+    //////////////////TEST FUNCTIONS/////////////////////////////
+
+    protected function testSemanticFingerprinting($testData,$dataTerms,$fingerprinting)
+    {
+        $right = 0;
+
+        foreach($testData as $key => $value){
+            print_r("<br>");
+            print_r($key);
+            print_r("<br>");
+            $cat= trim(strtolower(strstr($testData[$key]->getArticleID()->getCategory(), ' ')));
+            $probabilities = $fingerprinting->classify($testData[$key]);
+            arsort($probabilities);
+
+            print_r("<pre>");
+            print_r($probabilities);
+            print_r("</pre>");
+
+
+            $predictedCat = current(array_keys($probabilities));
+
+
+            print_r($predictedCat);
+            print("----");
+            print_r($cat);
+            print("<br>");
+
+            //compare it with the selected category
+            if (strpos($cat, $predictedCat) !== false) {
+                $right = $right +1;
+
+            }
+        }
+
+        return $right;
+
+    }
+
+
+
+    protected function testNaiveBayes($testData,$dataTerms,$naive){
+        $right = 0;
+
+        foreach($testData as $key => $value){
+            $cat=strtolower($testData[$key][0]);
+            $probabilities =$naive->classifyDocument($testData[$key][1]);
+            print_r("<pre>");
+            print_r($probabilities);
+            print_r("</pre>");
+
+            $predictedCat = current(array_keys($probabilities));
+
+            print_r($predictedCat);
+            print("----");
+            print_r($cat);
+            print("<br>");
+
+            //compare it with the selected category
+            if (strpos($cat, $predictedCat) !== false) {
+                $right = $right +1;
+
+            }
+        }
+
+        return $right;
+    }
+
+
+    protected function testKNN($testData,$dataTerms,$knn){
+        $right = 0;
+        $k =15;
+        $sim = new CosineSimilarity();
+        $t = array_slice($testData,0,1,true);
+
+        foreach($testData as $key => $test){
+            $id = $dataTerms[$key]->getArticleID()->getUid();
+            print("<br>");
+            print_r($id);
+            print("<br>");
+
+            $categories=[];
+            //get specific Catgeory
+            $cat=strtolower($dataTerms[$key]->getArticleID()->getCategory());
+            $data = $knn->cosineSim($key,$sim);
+            //sort data big to low
+            arsort($data);
+            //get the top K neighbours
+            $topK = array_slice($data,0,$k,true);
+
+            print_r("<pre>");
+            print_r($topK);
+            print_r("</pre>");
+
+            //get categories of them (general or specific)
+            foreach ($topK as $c =>$value) {
+                $a=explode(" ",$dataTerms[$c]->getArticleID()->getCategory());
+                //$a=trim(strtolower(strstr($dataTerms[$c]->getArticleID()->getCategory(), ' ')));
+                $categories[] = $a[0];
+            }
+
+
+            $weighting = [];
+            $dist = array_slice($topK,0,$k);
+            //summing up similarities for different classes
+            foreach($dist as $i => $v){
+                $weighting[$categories[$i]] = $weighting[$categories[$i]]+$dist[$i];
+            }
+            print_r("<pre>");
+            print_r($categories);
+            print_r("</pre>");
+
+            //sort for biggest similarity
+            arsort($weighting);
+
+           //$countCat = array_count_values($categories);
+           // arsort($countCat);
+
+            //take the class with the most members
+            //$predictedCat = current(array_keys($countCat));
+            //get the highest similarity
+            $predictedCat = current(array_keys($weighting));
+
+
+            print_r("<pre>");
+           // print_r($countCat);
+            print_r($weighting);
+            print_r("</pre>");
+
+            print_r($predictedCat);
+            print("----");
+            print_r($cat);
+            print("<br>");
+
+            //compare it with the selected category
+            if (strpos($cat, $predictedCat) !== false) {
+                $right = $right +1;
+
+            }
+        }
+
+        return $right;
+    }
+
+    protected function testWeightedKNN($testData,$dataTerms,$knn){
+        $right = 0;
+        $k = 7;
+        $sim = new CosineSimilarity();
+
+        foreach($testData as $key => $test){
+            $categories=[];
+            $cat=strtolower($dataTerms[$key]->getArticleID()->getCategory());
+            $data = $knn->cosineSim($key,$sim);
+            arsort($data);
+
+            $topK = array_slice($data,0,$k,true);
+
+            foreach ($topK as $c =>$value) {
+                $a=explode(" ",$dataTerms[$c]->getArticleID()->getCategory());
+               // $a=strtolower(strstr($dataTerms[$c]->getArticleID()->getCategory(), ' '));
+                $categories[] = $a[0];
+            }
+
+            $weighting = [];
+            $dist = array_slice($topK,0,$k);
+            foreach($dist as $i => $v){
+                $weighting[$categories[$i]] = $weighting[$categories[$i]]+$dist[$i];
+            }
+
+            $countCat = array_count_values($categories);
+            arsort($countCat);
+            foreach($weighting as $i => $v){
+                $weighting[$i] = $weighting[$i]/$countCat[$i];
+            }
+            arsort($weighting);
+            $predictedCat = current(array_keys($weighting));
+
+            if (strpos($cat, $predictedCat) !== false) {
+                $right = $right +1;
+
+            }
+        }
+
+        return $right;
+    }
+
+
     
     /**
      * action new
