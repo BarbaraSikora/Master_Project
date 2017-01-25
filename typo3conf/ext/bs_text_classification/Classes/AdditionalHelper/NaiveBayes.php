@@ -47,8 +47,8 @@ class NaiveBayes
     {
         $count = count($data);
         $help = new Helper();
-        $trainingNumb = ceil($count*0.67);
-        $testingNumb = floor($count*0.33);
+        $trainingNumb = ceil($count*0.80);
+        $testingNumb = floor($count*0.20);
 
         $this->prepareData($data);
 
@@ -93,7 +93,7 @@ class NaiveBayes
                 }
             }
 
-           // $array = array_unique($array); ??
+           // $array = array_unique($array); macht ergebnisse schlechter
 
             $this->classTermsArray[$key][1] = $array;
         }
@@ -194,12 +194,12 @@ class NaiveBayes
             $scores[$class] = 1 / (1 + exp($log));
           //$scores[$class] = exp($log);
 
-            print($class);
+          /*  print($class);
             print("<br>");
             print_r($log);
             print("<br>");
             print_r($scores[$class]);
-            print("<br>");
+            print("<br>");*/
         }
         arsort($scores, SORT_NUMERIC);
        return $scores;

@@ -96,7 +96,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     {
         $dataTerms = $this->englishTermsRepository->findAll();
         $percentage = 0;
-       //$dataTerms = $this->help->filterSpecificCategories($dataTerms);
+       $dataTerms = array_values($this->help->filterSpecificCategories($dataTerms));
 
 
         //$testID = 57;
@@ -111,13 +111,14 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         print_r(count($testData));
         print_r("</pre>");
 
-       // $this->help->exportMDS($knn);
+       //$this->help->exportMDS($knn);
         //$this->help->exportGeneralCategory($dataTerms);
        // $this->help->exportExactCatgeory($dataTerms);
        // $this->help->exportCategories($dataTerms);
 
+       // $this->help->exportComparisonTwoFiles($knn);
 
-     $percentage = $this->testKNN($testData,$dataTerms,$knn);
+        $percentage = $this->testKNN($testData,$dataTerms,$knn);
 
         $this->view->assign('data',$percentage );
 
@@ -167,25 +168,34 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     public function fingerprintingAction()
     {
         $dataTerms = $this->englishTermsRepository->findAll();
-        $percentage = 100000;
+        $percentage = 0;
         $dataTerms = $this->help->filterSpecificCategories($dataTerms);
         $fingerprinting = new SemanticFingerprinting();
         $fingerprinting->startSemanticFingerprinting($dataTerms);
         $testData = $fingerprinting->getTestData();
 
-     //$cat = $fingerprinting->classify($testData[31]);//31,10,161,72,84 world,world, football,world,world
-
-         print_r("<pre>");
-        //print_r($cat);
-        print("<br>");
-        print_r(count($dataTerms));
-        print("<br>");
-        print_r(count($testData));
-        print_r("</pre>");
+        /*$cat= trim(strtolower(strstr($testData[1264]->getArticleID()->getCategory(), ' ')));
+        $probabilities = $fingerprinting->classify($testData[1264]);//31,10,161,72,84 world,world, football,world,world 1264
+        arsort($probabilities);
+        $predictedCat = current(array_keys($probabilities));
 
 
+        print_r($predictedCat);
+        print("----");
+        print_r($cat);
+        print("<br>");*/
 
-        $percentage = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
+            print_r("<pre>");
+           // print_r($probabilities);
+            print("<br>");
+            print_r(count($dataTerms));
+            print("<br>");
+            print_r(count($testData));
+            print_r("</pre>");
+
+
+
+       $percentage = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
 
         $this->view->assign('data',$percentage );
 
@@ -242,14 +252,19 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $right = 0;
 
         foreach($testData as $key => $value){
-            $cat=strtolower($testData[$key][0]);
+            $cat= trim(strtolower(strstr($testData[$key][0], ' ')));
             $probabilities =$naive->classifyDocument($testData[$key][1]);
-            print_r("<pre>");
-            print_r($probabilities);
-            print_r("</pre>");
+
 
             $predictedCat = current(array_keys($probabilities));
 
+
+            print_r("<br>");
+            print_r($key);
+            print_r("<br>");
+            print_r("<pre>");
+            print_r($probabilities);
+            print_r("</pre>");
             print_r($predictedCat);
             print("----");
             print_r($cat);
@@ -275,12 +290,14 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         foreach($testData as $key => $test){
             $id = $dataTerms[$key]->getArticleID()->getUid();
             print("<br>");
+            print_r($key);
+            print("<br>");
             print_r($id);
             print("<br>");
 
             $categories=[];
             //get specific Catgeory
-            $cat=strtolower($dataTerms[$key]->getArticleID()->getCategory());
+            $cat= trim(strtolower(strstr($dataTerms[$key]->getArticleID()->getCategory(), ' ')));;
             $data = $knn->cosineSim($key,$sim);
             //sort data big to low
             arsort($data);
@@ -293,9 +310,9 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
             //get categories of them (general or specific)
             foreach ($topK as $c =>$value) {
-                $a=explode(" ",$dataTerms[$c]->getArticleID()->getCategory());
-                //$a=trim(strtolower(strstr($dataTerms[$c]->getArticleID()->getCategory(), ' ')));
-                $categories[] = $a[0];
+                //$a=explode(" ",$dataTerms[$c]->getArticleID()->getCategory());
+                $a=trim(strtolower(strstr($dataTerms[$c]->getArticleID()->getCategory(), ' ')));
+                $categories[] = $a;
             }
 
 

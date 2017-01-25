@@ -196,9 +196,13 @@ class Helper
         foreach($array as $key => $value){
             $cat = explode(" ",$value->getArticleID()->getCategory());
 
-            if($cat[0] == "uk-news" || $cat[0] == "world"  || $cat[0] == "sport"  || $cat[0] == "fashion"  || $cat[0] == "football"){
-               $newArray[$key] = $value;
+            if( $cat[0] == "world"  || $cat[0] == "sport"){
+                $newArray[$key] = $value;
             }
+
+           /* if($cat[0] == "uk-news" || $cat[0] == "world"  || $cat[0] == "sport"  || $cat[0] == "fashion"  || $cat[0] == "football"){
+               $newArray[$key] = $value;
+            }*/
         }
 
 
@@ -216,20 +220,21 @@ class Helper
 
         foreach($array as $key => $value){
             $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-          if( $cat == "football" ||$cat == "world news" /*|| $cat == "opinion"  || $cat == "fashion"*/){
+         if( $cat == "world news" || $cat == "football" /*|| $cat == "fashion"  || $cat == "technology"*/){
+          //test fashion whs technology $numb raus?   film und politics guuut 0.8
                 $newArray[$key] = $value;
             }
 
-           /* if( $cat == "life and style"  || $cat == "technology"
-                || $cat == "television & radio" || $cat == "film"  ){
+          /*  if( $cat == "fashion"  || $cat == "politics"  ){
                 $newArray[$key] = $value;
             }*/
 
-          /*  if($cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
-                $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment"  || $cat == "technology"
-                || $cat == "television & radio" || $cat == "film"  || $cat == "music"  || $cat == "us news"  || $cat == "football" || $cat == "fashion"){
-                $newArray[$key] = $value;
-            }*/
+            /*  if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
+                    $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+                    || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
+                    ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
+                    $newArray[$key] = $value;
+                }*/
         }
 
 
@@ -339,8 +344,8 @@ class Helper
         $dataTerms = $knn->getDataTerms();
         $sim = new CosineSimilarity();
 
-        $id1=rand(0,731);
-        $id2 =rand(0,731);
+        $id1=rand(0,494);
+        $id2 =rand(0,494);
         $a = $dataVector[$id1];
         $b = $dataVector[$id2];
         $similarity = $sim->similarity($a,$b);
@@ -412,7 +417,7 @@ class Helper
         }
 
 
-        $fp = fopen('file.csv', 'w');
+        $fp = fopen('file_politicsUk.csv', 'w');
 
         foreach ($distances as $fields) {
             print_r(fputcsv($fp, $fields));
@@ -427,7 +432,12 @@ class Helper
        print("<pre>");
         print_r( $array);
         print("</pre>");
-        $fp = fopen('file_finger_testfinger_sorted.csv', 'w');
+
+        /*foreach (array_keys($array, 0) as $key) {
+            unset($array[$key]);
+        }*/
+
+        $fp = fopen('file_finger_'.$category.'.csv', 'w');
 
         //foreach ($array as $fields) {
              print_r(fputcsv($fp, array_keys($array)));

@@ -68,8 +68,8 @@ class KNearestNeighbours
         $this->dataTerms = $data;
         $count = count($data);
         $help = new Helper();
-        $this->training = ceil($count*0.67);
-        $this->testing = floor($count*0.33);
+        $this->training = ceil($count*0.80);
+        $this->testing = floor($count*0.20);
 
         $this->dataVectors= $this->tfidf();
         $help->shuffle_assoc($this->dataVectors);
