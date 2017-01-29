@@ -67,6 +67,8 @@ class CosineSimilarity implements SimilarityInterface, DistanceInterface
 
 
 
+
+
         $v2_norm = 0.0;
         foreach ($v2 as $i=>$xi) {
             $v2_norm += $xi*$xi;

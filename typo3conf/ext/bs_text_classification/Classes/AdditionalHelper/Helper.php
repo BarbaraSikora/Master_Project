@@ -220,14 +220,14 @@ class Helper
 
         foreach($array as $key => $value){
             $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-         if( $cat == "world news" || $cat == "football" /*|| $cat == "fashion"  || $cat == "technology"*/){
+        /*if(  $cat == "world news" || $cat == "football"||  $cat == "fashion"  || $cat == "technology"){
           //test fashion whs technology $numb raus?   film und politics guuut 0.8
                 $newArray[$key] = $value;
-            }
-
-          /*  if( $cat == "fashion"  || $cat == "politics"  ){
-                $newArray[$key] = $value;
             }*/
+
+            if( $cat == "business"/*  || $cat == "film" || $cat == "football" || $cat == "travel" */ ||$cat == "science"){
+                $newArray[$key] = $value;
+            }
 
             /*  if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
                     $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
@@ -429,9 +429,6 @@ class Helper
     }
 
     public function exportFingerprint($category,$array){
-       print("<pre>");
-        print_r( $array);
-        print("</pre>");
 
         /*foreach (array_keys($array, 0) as $key) {
             unset($array[$key]);
