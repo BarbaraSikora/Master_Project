@@ -174,17 +174,18 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $fingerprinting->startSemanticFingerprinting($dataTerms);
         $testData = $fingerprinting->getTestData();
 
-       // print_r($dataTerms[999]->getArticleID()->getUid());
+        //print_r($dataTerms[0]->getArticleID()->getUid());
+     /*  // print("<br>");
+       print_r($dataTerms[530]->getArticleID()->getUid());
 
-       // print_r($dataTerms[1241]->getArticleID()->getUid());//
-/*
-         $cat= trim(strtolower(strstr($testData[2304]->getArticleID()->getCategory(), ' ')));
-        $probabilities = $fingerprinting->classify($testData[2304]);// 209, 1047, 1240, 1075, 1241, 203 falsche!!!
+        $cat= trim(strtolower(strstr($testData[530 ]->getArticleID()->getCategory(), ' ')));
+        $probabilities = $fingerprinting->classify($testData[530]);// 209, 1047, 1240, 1075, 1241, 203 falsche!!!
         arsort($probabilities);
         $predictedCat = current(array_keys($probabilities));
 
         // 465,1825,209,1240 fashion export
-         // 31, 427,520
+         // 31, 427,520 world news/ football
+        // 2095, 1673 film/politics
         // vielleicht gewichten?? höchster stack wo gehört der hin zu welcher classe
 
 
@@ -194,7 +195,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         print("<br>");*/
 
             print_r("<pre>");
-           //print_r($probabilities);
+          // print_r($probabilities);
             print("<br>");
             print_r(count($dataTerms));
             print("<br>");

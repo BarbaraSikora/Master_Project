@@ -13,6 +13,7 @@ use NlpTools\Analysis\Idf;
 use NlpTools\Documents\TokensDocument;
 use NlpTools\Documents\TrainingSet;
 use NlpTools\Similarity\CosineSimilarity;
+use NlpTools\Similarity\Euclidean;
 
 class SemanticFingerprinting
 {
@@ -66,12 +67,8 @@ class SemanticFingerprinting
 
         $this->trainVector= $this->tfidf(); //innerhalb von texten unique wörter, aber innerhalb einer klasse nicht
 
-        /*print("<pre>");
-        print_r("<br>");
-        print_r($this->trainVector);
-        print("</pre>");*/
 
-        foreach($this->trainVector as $textID =>$values){
+    foreach($this->trainVector as $textID =>$values){
             $cat = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
             if(!array_key_exists($cat,$labels)){
                 $labels[$cat] = 0;
@@ -80,19 +77,14 @@ class SemanticFingerprinting
         }
 
         $this->contextLabelMap = $this->createContextMap($labels);
-        //asort($this->contextLabelMap);
-       print("<pre>");
+
+      /* print("<pre>");
         print_r("-------------------");
         print_r("<br>");
        print_r(array_values($this->contextLabelMap));
       print_r("<br>");
        // print_r(array_keys($this->contextLabelMap));
-        print("</pre>");
-
-        //sorting context array funzt ned wirkli
-        /* asort($array);
-       $sortedContextMap = array_keys($array);
-     $this->contextMap = $sortedContextMap;*/
+        print("</pre>");*/
 
 
 
@@ -103,32 +95,27 @@ class SemanticFingerprinting
          }
 
 
-        /*print("<pre>");
-        print_r("-------------------");
-        print_r("<br>");
-        print_r($this->data);
-        print("</pre>");*/
+    /* $sim = new CosineSimilarity();
 
-      /*  $sim = new CosineSimilarity();
-
-        $similarity = $sim->similarity($this->data['film'],$this->data['business']);
+        $similarity = $sim->similarity($this->data['technology'],$this->data['fashion']);
         print_r("<br>");
         print_r("SIMILARITY = ");
         print_r($similarity);
         print_r("<br>");*/
 
         //whole category for category fp
-        foreach($this->data as $key => $words){
-             $this->createCategoryFingerprints($key,$words);
-         }
+       foreach($this->data as $key => $words){
+           $this->createCategoryFingerprints($key,$words);
+        }
 
-      /* print("<pre>");
-        print_r("-------------------");
-        print_r("<br>");
-        print_r($this->categoryFingerprints);
-        print("</pre>");*/
+      /*  print("<pre>");
+       print_r("-------------------");
+        print("CATEGORY FP<br>");
+       print_r("<br>");
+       print_r($this->categoryFingerprints);
+       print("</pre>");*/
 
-       // $this->createSimilarityMatrix();
+      // $this->createSimilarityMatrix();
 
        /* //single text for category fp
          $array = array_unique($array);
@@ -142,6 +129,9 @@ class SemanticFingerprinting
             $this->createSingleTextCategoryFingerprints($label,$key);
         }*/
 
+      /*   $help = new Helper();
+         $help->exportFingerprint("catfp_film",$this->categoryFingerprints['film']);
+        $help->exportFingerprint("catfp_politics",$this->categoryFingerprints['politics']);*/
     }
 
    // protected function prepareClassifier($class, $termArray,$key){
@@ -161,35 +151,6 @@ class SemanticFingerprinting
         }
 
         ksort($this->data[$class]);
-    }
-
-    function createSingleTextCategoryFingerprints($category,$id){
-        $stack = null;
-        $this->categoryFingerprints[$category] = [];
-
-        $text = array_keys($this->trainVector[$id]);
-
-        //create all word SDRs
-        foreach($text as $k => $word){
-            $stack[$word] = $this->getWordSDR($word);
-
-        }
-        //stack all word SDRs to get text SDR
-        foreach($stack as $word => $array){
-            for($i = 0; $i < count($array);$i++){
-                $this->categoryFingerprints[$category][$i] += $array[$i];
-            }
-        }
-
-        $tmp = $this->calculateThreshold($stack);
-        arsort($tmp);
-        $threshold = array_slice($tmp,0,$this->threshold,true);
-
-        $this->categoryFingerprints[$category] = $this->getTextSDR($tmp,$threshold);
-        ksort($this->categoryFingerprints[$category]);
-        /*print("<pre>");
-          print_r($stack);
-          print("</pre>"); */
     }
 
     function createCategoryFingerprints($category,$words){
@@ -221,31 +182,32 @@ class SemanticFingerprinting
         $package = $this->createTestDataFingerprint($testArray);
         $fingerprint = $package['fp'];
 
-        $class = array_values($this->contextLabelMap)[$package['highestContext']];
+       // $class = array_values($this->contextLabelMap)[$package['highestContext']];
+        $class = $package['highestContext'];
 
        /* print("<pre>");
         print_r($fingerprint);
         print("</pre>");*/
         ksort($fingerprint);
-       /*print("<pre>");
-        print_r($class);
+     /*  print("<pre>");
+        print("FP<br>");
+        print_r($fingerprint);
         print("</pre>");*/
 
-       // $help = new Helper();
-       // $help->exportFingerprint("testfp-footballWorld02",$fingerprint);
+        //$help = new Helper();
+       // $help->exportFingerprint("testfp-filmPolitics02",$fingerprint);
 
         $sim = new CosineSimilarity();
 
 
 
         foreach($this->categoryFingerprints as $cat => $key){
-
             $probabilities[$cat] = 0;
             //semantic closeness!!!
             $probabilities[$cat] =  $sim->similarity($key,$fingerprint);
         }
 
-        //topic overlaps
+      //topic overlaps
         $overlaps = [];
         foreach($fingerprint as $i => $k){
             if($k == 1){
@@ -258,21 +220,25 @@ class SemanticFingerprinting
 
         arsort($probabilities);
 
-       $check = array_values(array_slice($probabilities,0,2,false));
+       /* //weighting is möglich aber nicht immer von vorteil
+       if(current(array_keys($probabilities)) != $class){
+             $probabilities[$class] *= 1.5;
+         }
+         arsort($probabilities);*/
 
+        //check if first two are equal
+       $check = array_values(array_slice($probabilities,0,2,false));
         if($check[0] == $check[1]){
             $probabilities[$class] += 0.0001;
         }
         arsort($probabilities);
-        /*//weighting is möglich aber nicht immer von vorteil
-          if(current(array_keys($probabilities)) != $class){
-                $probabilities[$class] += 0.15;
-            }
-            arsort($probabilities);*/
+
+
+
 
        // return $class;
-       //return $overlaps;
-        return $probabilities;
+      // return $overlaps;
+       return $probabilities;
     }
 
     function createTestDataFingerprint($testArray){
@@ -283,8 +249,10 @@ class SemanticFingerprinting
             $stack[$word] = $this->getWordSDR($word);
         }
 
-        /*print("<pre>");
-        print_r($stack);
+      /*  print("<pre>");
+        print("STACK<br>");
+       // print_r(count($stack)); //363
+        print_r($stack); //363
         print("</pre>");*/
 
         //get the highest values
@@ -293,16 +261,92 @@ class SemanticFingerprinting
 
         $threshold = array_slice($tmp,0,$this->threshold,true);
 
-      /*  print("<pre>");
+     /*  print("<pre>");
+        print("THRESHOLD<br>");
         print_r($threshold);
         print("</pre>");*/
 
-//FEEHLER!!! nur wo 1 sind text sdr machn!! calculateThreshold war faslch!!! dopplte variable!!! check of textsdr richtig is
+        //get durchschnitts classe in threshold
+       $presentClass = [];
+        foreach($threshold as $i => $k){
+                if(!array_key_exists($this->contextLabelMap[$this->contextMap[$i]],$presentClass)){
+                    $overlaps[$this->contextLabelMap[$this->contextMap[$i]]]=0;
+                }
+            $presentClass[$this->contextLabelMap[$this->contextMap[$i]]]++;
+
+        }
+
+        arsort($presentClass);
+       /* print("<pre>");
+        print_r($presentClass);
+        print("</pre>");*/
 
         //return $threshold;
         $fpPackage['fp'] = $this->getTextSDR($tmp,$threshold);
-        $fpPackage['highestContext'] =  current(array_keys($threshold)); //array_slice($tmp,0,5,true);
+        $fpPackage['highestContext'] =  current(array_keys($presentClass)); //array_slice($tmp,0,5,true);
         return $fpPackage;
+    }
+
+
+    protected function createContextMap($labels){
+
+        $test= null;
+
+      //  foreach(array_keys($labels) as $class){
+            foreach($this->trainVector as $textID => $val) {
+                $indexSim = [];
+                $cat = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
+
+              /*  print("<br>");
+                print_r($textID);
+                print("<br>");
+                print_r($this->dataTerms[$textID]->getArticleID()->getCategory());
+                print("<br>");*/
+
+            //  if($class == $cat ){
+                    for ($i = 0; $i < count($this->contextMap); $i++) {
+                        $indexSim[$i] = $this->getSimilarity($this->trainVector[$textID], $this->trainVector[$this->contextMap[$i]]);
+                    }
+                    if (count($indexSim) == 0) {
+                        $this->contextMap[0] = $textID;
+                        $test[0] = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
+                    } else {
+                        arsort($indexSim);
+
+                      /*  print("<pre>");
+                        print("<br>");
+                        print_r($indexSim);
+                        print("</pre>");*/
+
+                        $pastBehind = current(array_keys($indexSim)) + 1;
+
+                        /*print("<br>");
+                        print_r($pastBehind);*/
+
+                        array_splice($this->contextMap, $pastBehind, 0, $textID);
+                        array_splice($test, $pastBehind, 0, trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' '))));
+
+                    }
+                    /*print("<pre>");
+                    print("<br>");
+                    print_r($this->contextMap);
+                    print("<br>");
+                    print_r($test);
+                    print("</pre>");*/
+            //  }
+            }
+      // }
+
+        $array = null;
+        foreach($this->contextMap as $val){
+            $cat = $this->dataTerms[$val]->getArticleID()->getCategory();
+           // $cat = explode(" ",$cat);
+            $cat=trim(strtolower(strstr($cat, ' ')));
+            // $this->contextLabelMap[$cat][]=$val ;
+            $array[$val] =$cat;
+        }
+
+        return $array;
     }
 
     protected function calculateThreshold($stack){
@@ -334,16 +378,15 @@ class SemanticFingerprinting
 
         foreach($this->contextMap as $key => $index) {
             if(array_key_exists($word,$this->trainVector[$index])){
-               $array[$key] = 1;
+                $array[$key] = 1;
             }else{
                 $array[$key] = 0;
             }
         }
         return $array;
     }
+
     protected function getStackOfWordSDRs($word,$array,$numb){
-
-
         foreach($this->contextMap as $key => $index) {
             if(array_key_exists($word,$this->trainVector[$index])){
                 $array[$key] += 1*$numb;
@@ -355,116 +398,19 @@ class SemanticFingerprinting
     }
 
     protected function getStackOfTextSDRs($text,$array){
-
         foreach($text as $key => $val) {
-                $array[$key] += $text[$key];
+            $array[$key] += $text[$key];
         }
-        return $array;
-    }
-
-
-
-
-    protected function createContextMap($labels){
-
-        $test= null;
-
-        //foreach(array_keys($labels) as $class){
-            foreach($this->trainVector as $textID => $val) {
-                $indexSim = [];
-                $cat = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
-
-              /*  print("<br>");
-                print_r($textID);
-                print("<br>");
-                print_r($this->dataTerms[$textID]->getArticleID()->getCategory());
-                print("<br>");*/
-
-              //if($class == $cat ){
-                    for ($i = 0; $i < count($this->contextMap); $i++) {
-                        $indexSim[$i] = $this->getSimilarity($this->trainVector[$textID], $this->trainVector[$this->contextMap[$i]]);
-                    }
-                    if (count($indexSim) == 0) {
-                        $this->contextMap[0] = $textID;
-                        $test[0] = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
-                    } else {
-                        arsort($indexSim);
-
-                      /*  print("<pre>");
-                        print("<br>");
-                        print_r($indexSim);
-                        print("</pre>");*/
-
-                        $pastBehind = current(array_keys($indexSim)) + 1;
-
-                        /*print("<br>");
-                        print_r($pastBehind);*/
-
-                        array_splice($this->contextMap, $pastBehind, 0, $textID);
-                        array_splice($test, $pastBehind, 0, trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' '))));
-
-                    }
-                    /*print("<pre>");
-                    print("<br>");
-                    print_r($this->contextMap);
-                    print("<br>");
-                    print_r($test);
-                    print("</pre>");*/
-              //  }
-            }
-       // }
-
-        $array = null;
-        foreach($this->contextMap as $val){
-            $cat = $this->dataTerms[$val]->getArticleID()->getCategory();
-           // $cat = explode(" ",$cat);
-            $cat=trim(strtolower(strstr($cat, ' ')));
-            // $this->contextLabelMap[$cat][]=$val ;
-            $array[$val] =$cat;
-        }
-
         return $array;
     }
 
 
     function getSimilarity($A,$B){
         $sim = new CosineSimilarity();
-        $similarity =  $sim->similarity($A,$B);
+        $similarity =  $sim->similarity($A,$B);########
         return $similarity;
     }
 
-
-    function createSimilarityMatrix(){
-        $sim = new CosineSimilarity();
-        $distances = [];
-
-        $distances[0][0] = "className";
-        $i= 0;
-        foreach($this->data as $k1 => $v1){
-            $class = $k1;
-            $distances[$i+1][0]= $class;
-            $j=0;
-            foreach($this->data as $k2 => $v2){
-                $class2 = $k2;
-                $distances[0][$j+1] = $class2;
-                $distances[$i+1][]= $sim->similarity($v1,$v2);
-                $j++;
-            }
-            $i++;
-        }
-
-
-        $fp = fopen('file_classSim2.csv', 'w');
-
-        foreach ($distances as $fields) {
-            print_r(fputcsv($fp, $fields));
-            print_r("<br>");
-        }
-
-        fclose($fp);
-
-        //$this->simMatrix=$distances;
-    }
 
     function tfidf(){
         $trainSet = new TrainingSet();
@@ -514,8 +460,72 @@ class SemanticFingerprinting
                 unset($array[$k]);
             }
         }
+
         return $array;
     }
+
+    function createSingleTextCategoryFingerprints($category,$id){
+        $stack = null;
+        $this->categoryFingerprints[$category] = [];
+
+        $text = array_keys($this->trainVector[$id]);
+
+        //create all word SDRs
+        foreach($text as $k => $word){
+            $stack[$word] = $this->getWordSDR($word);
+
+        }
+        //stack all word SDRs to get text SDR
+        foreach($stack as $word => $array){
+            for($i = 0; $i < count($array);$i++){
+                $this->categoryFingerprints[$category][$i] += $array[$i];
+            }
+        }
+
+        $tmp = $this->calculateThreshold($stack);
+        arsort($tmp);
+        $threshold = array_slice($tmp,0,$this->threshold,true);
+
+        $this->categoryFingerprints[$category] = $this->getTextSDR($tmp,$threshold);
+        ksort($this->categoryFingerprints[$category]);
+        /*print("<pre>");
+          print_r($stack);
+          print("</pre>"); */
+    }
+
+
+    function createSimilarityMatrix(){
+        $sim = new Euclidean();
+        $distances = [];
+
+        $distances[0][0] = "className";
+        $i= 0;
+        foreach($this->data as $k1 => $v1){
+            $class = $k1;
+            $distances[$i+1][0]= $class;
+            $j=0;
+            foreach($this->data as $k2 => $v2){
+                $class2 = $k2;
+                $distances[0][$j+1] = $class2;
+                $distances[$i+1][]= $sim->dist($v1,$v2);
+                $j++;
+            }
+            $i++;
+        }
+
+
+        $fp = fopen('file_classSimEuclid.csv', 'w');
+
+        foreach ($distances as $fields) {
+            print_r(fputcsv($fp, $fields));
+            print_r("<br>");
+        }
+
+        fclose($fp);
+
+        //$this->simMatrix=$distances;
+    }
+
 
 
 
