@@ -83,19 +83,13 @@ class KNearestNeighbours
 
     function cosineSim($testID,$sim){
         $distances = [];
-        /*arsort($this->testData[$testID]);
-        print_r("<pre>");
+       /* print_r("<pre>");
         print_r($this->testData[$testID]);
         print_r("</pre>");*/
-
      foreach($this->trainingsData as $key => $value){
+            //$distances[$key] = $sim->similarity($this->trainingsData[$testID],$this->trainingsData[$key]);
             $distances[$key] = $sim->similarity($this->testData[$testID],$this->trainingsData[$key]);
       }
-
-        /*print_r("<pre>");
-        print_r($this->trainingsData[8]);
-        print_r("</pre>");*/
-
         return $distances;
     }
 
@@ -105,6 +99,7 @@ class KNearestNeighbours
         $content = preg_replace('/[0-9]+/', '', $content);
         //stemming
         $array =  explode(" ",$content);
+        $array = $help->stopWordsReduction($array);
         $array = $help->stemTerms($array);
         foreach($array as $k => $v){
             if(strlen($v) <3 || strlen($v) > 20 ){

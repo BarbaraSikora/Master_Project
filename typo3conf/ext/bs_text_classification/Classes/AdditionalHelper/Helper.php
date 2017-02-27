@@ -28,6 +28,7 @@ use NlpTools\Utils\StopWords;
 class Helper
 {
     protected $stopwordsENG = array("a", "about", "above", "above", "across", "after", "afterwards", "again", "against", "all", "almost", "alone", "along", "already", "also","although","always","am","among", "amongst", "amoungst", "amount",  "an", "and", "another", "any","anyhow","anyone","anything","anyway", "anywhere", "are", "around", "as",  "at", "back","be","became", "because","become","becomes", "becoming", "been", "before", "beforehand", "behind", "being", "below", "beside", "besides", "between", "beyond", "bill", "both", "bottom","but", "by", "call", "can", "cannot", "cant", "co", "con", "could", "couldnt", "cry", "de", "describe", "detail", "do", "done", "down", "due", "during", "each", "eg", "eight", "either", "eleven","else", "elsewhere", "empty", "enough", "etc", "even", "ever", "every", "everyone", "everything", "everywhere", "except", "few", "fifteen", "fify", "fill", "find", "fire", "first", "five", "for", "former", "formerly", "forty", "found", "four", "from", "front", "full", "further", "get", "give", "go", "had", "has", "hasnt", "have", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "him", "himself", "his", "how", "however", "hundred", "ie", "if", "in", "inc", "indeed", "interest", "into", "is", "it", "its", "itself", "keep", "last", "latter", "latterly", "least", "less", "ltd", "made", "many", "may", "me", "meanwhile", "might", "mill", "mine", "more", "moreover", "most", "mostly", "move", "much", "must", "my", "myself", "name", "namely", "neither", "never", "nevertheless", "next", "nine", "no", "nobody", "none", "noone", "nor", "not", "nothing", "now", "nowhere", "of", "off", "often", "on", "once", "one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours", "ourselves", "out", "over", "own","part", "per", "perhaps", "please", "put", "rather", "re", "same", "see", "seem", "seemed", "seeming", "seems", "serious", "several", "she", "should", "show", "side", "since", "sincere", "six", "sixty", "so", "some", "somehow", "someone", "something", "sometime", "sometimes", "somewhere", "still", "such", "system", "take", "ten", "than", "that", "the", "their", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "therefore", "therein", "thereupon", "these", "they", "thickv", "thin", "third", "this", "those", "though", "three", "through", "throughout", "thru", "thus", "to", "together", "too", "top", "toward", "towards", "twelve", "twenty", "two", "un", "under", "until", "up", "upon", "us", "very", "via", "was", "we", "well", "were", "what", "whatever", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "whereupon", "wherever", "whether", "which", "while", "whither", "who", "whoever", "whole", "whom", "whose", "why", "will", "with", "within", "without", "would", "yet", "you", "your", "yours", "yourself", "yourselves", "the");
+    protected $stopwordsENGAdditional = array("a", "about", "above", "above", "across", "after", "afterwards", "again", "against", "all", "almost", "alone", "along", "already", "also","although","always","am","among", "amongst", "amoungst", "amount",  "an", "and", "another", "any","anyhow","anyone","anything","anyway", "anywhere", "are", "around", "as",  "at", "back","be","became", "because","become","becomes", "becoming", "been", "before", "beforehand", "behind", "being", "below", "beside", "besides", "between", "beyond", "bill", "both", "bottom","but", "by", "call", "can", "cannot", "cant", "co", "con", "could", "couldnt", "cry", "de", "describe", "detail", "do", "done", "down", "due", "during", "each", "eg", "eight", "either", "eleven","else", "elsewhere", "empty", "enough", "etc", "even", "ever", "every", "everyone", "everything", "everywhere", "except", "few", "fifteen", "fify", "fill", "find", "fire", "first", "five", "for", "former", "formerly", "forty", "found", "four", "from", "front", "full", "further", "get", "give", "go", "had", "has", "hasnt", "have", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "him", "himself", "his", "how", "however", "hundred", "ie", "if", "in", "inc", "indeed", "interest", "into", "is", "it", "its", "itself", "keep", "last", "latter", "latterly", "least", "less", "ltd", "made", "many", "may", "me", "meanwhile", "might", "mill", "mine", "more", "moreover", "most", "mostly", "move", "much", "must", "my", "myself", "name", "namely", "neither", "never", "nevertheless", "next", "nine", "no", "nobody", "none", "noone", "nor", "not", "nothing", "now", "nowhere", "of", "off", "often", "on", "once", "one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours", "ourselves", "out", "over", "own","part", "per", "perhaps", "please", "put", "rather", "re", "same", "see", "seem", "seemed", "seeming", "seems", "serious", "several", "she", "should", "show", "side", "since", "sincere", "six", "sixty", "so", "some", "somehow", "someone", "something", "sometime", "sometimes", "somewhere", "still", "such", "system", "take", "ten", "than", "that", "the", "their", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "therefore", "therein", "thereupon", "these", "they", "thickv", "thin", "third", "this", "those", "though", "three", "through", "throughout", "thru", "thus", "to", "together", "too", "top", "toward", "towards", "twelve", "twenty", "two", "un", "under", "until", "up", "upon", "us", "very", "via", "was", "we", "well", "were", "what", "whatever", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "whereupon", "wherever", "whether", "which", "while", "whither", "who", "whoever", "whole", "whom", "whose", "why", "will", "with", "within", "without", "would", "yet", "you", "your", "yours", "yourself", "yourselves", "the","a","able","about","across","after","all","almost","also","am","among","an","and","any","are","as","at","be","because","been","but","by","can","cannot","could","dear","did","do","does","either","else","ever","every","for","from","get","got","had","has","have","he","her","hers","him","his","how","however","i","if","in","into","is","it","its","just","least","let","like","likely","may","me","might","most","must","my","neither","no","nor","not","of","off","often","on","only","or","other","our","own","rather","said","say","says","she","should","since","so","some","than","that","the","their","them","then","there","these","they","this","tis","to","too","twas","us","wants","was","we","were","what","when","where","which","while","who","whom","why","will","with","would","yet","you","your","aint","arent","cant","couldve","couldnt","didnt","doesnt","dont","hasnt","hed","hell","hes","howd","howll","hows","id","ill","im","ive","isnt","its","mightve","mightnt","mustve","mustnt","shant","shed","shell","shes","shouldve","shouldnt","thatll","thats","theres","theyd","theyll","theyre","theyve","wasnt","wed","well","were","werent","whatd","whats","whend","whenll","whens","whered","wherell","wheres","whod","wholl","whos","whyd","whyll","whys","wont","wouldve","wouldnt","youd","youll","youre","youve");
 
     /**
      * action getData
@@ -114,6 +115,17 @@ class Helper
         $stem = new PorterStemmer();
         foreach ($array as $key => $value) {
             $array[$key] = $stem->transform($value);
+        }
+
+        return $array;
+    }
+
+    public function stopWordsReduction($array){
+        $stop = new StopWords($this->stopwordsENGAdditional);
+        //$stem = new PorterStemmer();
+
+        foreach ($array as $key => $value) {
+            $array[$key] = $stop->transform($value);
         }
 
         return $array;
@@ -220,21 +232,21 @@ class Helper
 
         foreach($array as $key => $value){
             $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-             if( $cat == "world news" || $cat == "football"||  $cat == "fashion"  || $cat == "technology"){
+          /*    if( $cat == "world news" || $cat == "football"||  $cat == "fashion"  || $cat == "technology"){
               //test fashion whs technology $numb raus?   film und politics guuut 0.8
-                    $newArray[$key] = $value;
-                }
-
-           /*    if( $cat == "sport"  ||$cat == "politics"){
                     $newArray[$key] = $value;
                 }*/
 
-            /*  if(  $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
-                      $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
-                      || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
-                      ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
-                     $newArray[$key] = $value;
-                 }*/
+               if( $cat == "sport"  ||$cat == "football" || $cat == "fashion"  ||$cat == "technology"){
+                    $newArray[$key] = $value;
+                }
+
+            /*if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
+                         $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+                         || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
+                         ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
+                        $newArray[$key] = $value;
+                    }*/
         }
 
 
@@ -244,12 +256,12 @@ class Helper
     // EXPORT FUNCTIONS
     public function writeFile($data){
         $article = $data->getArticleID();
-        $myfile = fopen("data/".$article->getUid().".txt", "w") or die("Unable to open file!");
+        $myfile = fopen("data2/".$article->getUid().".txt", "w") or die("Unable to open file!");
         $txt = "Category: ".$article->getCategory()."\r\n\r\n".$article->getContent();
         fwrite($myfile, $txt);
         fclose($myfile);
 
-        $myfile2 = fopen("terms/".$article->getUid().".txt", "w") or die("Unable to open file!");
+        $myfile2 = fopen("terms2/".$article->getUid().".txt", "w") or die("Unable to open file!");
         $txt2 = "Category: ".$article->getCategory()."\r\n\r\n".$data->getTerms();
         fwrite($myfile2, $txt2);
         fclose($myfile2);
@@ -417,7 +429,7 @@ class Helper
         }
 
 
-        $fp = fopen('file_politicsUk.csv', 'w');
+        $fp = fopen('file_sportFootballFashionLife.csv', 'w');
 
         foreach ($distances as $fields) {
             print_r(fputcsv($fp, $fields));

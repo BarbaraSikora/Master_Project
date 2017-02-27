@@ -64,14 +64,14 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     {
         $terms = $this->englishTermsRepository->findAll();
        /* foreach($terms as $term){
-            $article = $term;
-            $this->help->writeFile($article);
-          /*  $string = $term->getArticleID()->getContent();
-             $newArray= $this->help->preprocessingData($string);
-             $term->setTerms(implode(" ",$newArray));
-             $this->updateAction($term);*/
-       // }
-       // $terms = $this->englishTermsRepository->findAll();
+            /*  $article = $term;
+           $this->help->writeFile($article);
+        $string = $term->getArticleID()->getContent();
+            $newArray= $this->help->preprocessingData($string);
+            $term->setTerms(implode(" ",$newArray));
+            $this->updateAction($term);
+        }*/
+        //$terms = $this->englishTermsRepository->findAll();
         $this->view->assign('datas',count($terms));
     }
 
@@ -103,6 +103,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $knn = new KNearestNeighbours();
         $knn->startKnn($dataTerms);
         $testData = $knn->getTestData();
+        $trainData = $knn->getTrainingsData();
 
 
         print_r("<pre>");
@@ -112,13 +113,13 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         print_r("</pre>");
 
        //$this->help->exportMDS($knn);
-        //$this->help->exportGeneralCategory($dataTerms);
+       //$this->help->exportGeneralCategory($dataTerms);
        // $this->help->exportExactCatgeory($dataTerms);
        // $this->help->exportCategories($dataTerms);
-
-       // $this->help->exportComparisonTwoFiles($knn);
+       //$this->help->exportComparisonTwoFiles($knn);
 
         $percentage = $this->testKNN($testData,$dataTerms,$knn);
+        //$percentage = $this->testKNN($trainData,$dataTerms,$knn);
 
         $this->view->assign('data',$percentage );
 
@@ -175,20 +176,24 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $testData = $fingerprinting->getTestData();
 
         //print_r($dataTerms[0]->getArticleID()->getUid());
-     /*  // print("<br>");
-       print_r($dataTerms[530]->getArticleID()->getUid());
+      // print("<br>");
+    /*   print_r($dataTerms[1056]->getArticleID()->getUid());
 
-        $cat= trim(strtolower(strstr($testData[530 ]->getArticleID()->getCategory(), ' ')));
-        $probabilities = $fingerprinting->classify($testData[530]);// 209, 1047, 1240, 1075, 1241, 203 falsche!!!
+        $cat= trim(strtolower(strstr($testData[1056]->getArticleID()->getCategory(), ' ')));
+        $probabilities = $fingerprinting->classify($testData[1056]);// 209, 1047, 1240, 1075, 1241, 203 falsche!!!
         arsort($probabilities);
         $predictedCat = current(array_keys($probabilities));
+
+        print_r("<pre>");
+        print_r($probabilities);
+        print_r("</pre>");
 
         // 465,1825,209,1240 fashion export
          // 31, 427,520 world news/ football
         // 2095, 1673 film/politics
         // vielleicht gewichten?? höchster stack wo gehört der hin zu welcher classe
 
-
+        print("<br>");
         print_r($predictedCat);
         print("----");
         print_r($cat);
@@ -224,7 +229,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $right = 0;
 
         foreach($testData as $key => $value){
-            print_r("<br>");
+           print_r("<br>");
             print_r($key);
             print_r("<br>");
             $cat= trim(strtolower(strstr($testData[$key]->getArticleID()->getCategory(), ' ')));
@@ -298,7 +303,9 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $t = array_slice($testData,0,1,true);
 
         foreach($testData as $key => $test){
+            //$key = 451;
             $id = $dataTerms[$key]->getArticleID()->getUid();
+
             print("<br>");
             print_r($key);
             print("<br>");
@@ -314,7 +321,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             //get the top K neighbours
             $topK = array_slice($data,0,$k,true);
 
-            print_r("<pre>");
+           print_r("<pre>");
             print_r($topK);
             print_r("</pre>");
 
@@ -330,7 +337,8 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             $dist = array_slice($topK,0,$k);
             //summing up similarities for different classes
             foreach($dist as $i => $v){
-                $weighting[$categories[$i]] = $weighting[$categories[$i]]+$dist[$i];
+                $rank = $i+1;
+                $weighting[$categories[$i]] = $weighting[$categories[$i]]+($dist[$i]);
             }
             print_r("<pre>");
             print_r($categories);
@@ -339,19 +347,24 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             //sort for biggest similarity
             arsort($weighting);
 
-           //$countCat = array_count_values($categories);
-           // arsort($countCat);
+            print_r("<pre>");
+            print_r($weighting);
+            print_r("</pre>");
 
+          /* $countCat = array_count_values($categories);
+            arsort($countCat);
+
+            print_r("<pre>");
+            print_r($countCat);
+            print_r("</pre>");*/
             //take the class with the most members
             //$predictedCat = current(array_keys($countCat));
+
             //get the highest similarity
             $predictedCat = current(array_keys($weighting));
 
 
-            print_r("<pre>");
-           // print_r($countCat);
-            print_r($weighting);
-            print_r("</pre>");
+
 
             print_r($predictedCat);
             print("----");
@@ -363,7 +376,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
                 $right = $right +1;
 
             }
-        }
+      }
 
         return $right;
     }
@@ -382,9 +395,9 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             $topK = array_slice($data,0,$k,true);
 
             foreach ($topK as $c =>$value) {
-                $a=explode(" ",$dataTerms[$c]->getArticleID()->getCategory());
-               // $a=strtolower(strstr($dataTerms[$c]->getArticleID()->getCategory(), ' '));
-                $categories[] = $a[0];
+                //$a=explode(" ",$dataTerms[$c]->getArticleID()->getCategory());
+                $a=strtolower(strstr($dataTerms[$c]->getArticleID()->getCategory(), ' '));
+                $categories[] = $a;
             }
 
             $weighting = [];
@@ -459,7 +472,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
      */
     public function updateAction(\TextClassification\BsTextClassification\Domain\Model\EnglishTerms $englishTerms)
     {
-        //$this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
+        $this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->englishTermsRepository->update($englishTerms);
         //$this->redirect('list');
     }

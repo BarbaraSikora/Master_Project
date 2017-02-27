@@ -139,12 +139,12 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     /**
      * action list
      *
-     * @param TextClassification\BsTextClassification\Domain\Model\EnglishData
      * @return void
      */
     public function listAction()
     {
         $datas = $this->englishDataRepository->findAll();
+        //$datas = "test";
         $this->view->assign('datas', $datas);
     }
 

@@ -56,28 +56,16 @@ class NaiveBayes
 
         $this->trainingsData = array_slice($this->classTermsArray, 0,$trainingNumb,true);
         $this->testData = array_slice($this->classTermsArray, $trainingNumb,$testingNumb,true);
-       // $this->tfidf(); //removes double values
+       // $this->tfidf();
        foreach($this->trainingsData as $key => $doc){
             $this->trainClassifier($this->trainingsData[$key][0],$this->trainingsData[$key][1]);
         }
-
-
-        /* print_r("<pre>");
-           print_r($this->trainingsData);//terms
-           print("---------------"          /*   print_r($this->classes);
-            print("---------------");
-
-            print_r($this->documents);
-            print("---------------");
-
-            print_r($this->data);
-            print_r("</pre>");*/
-
 
     }
 
     protected function prepareData($data)
     {
+
         $help = new Helper();
         foreach ($data as $key => $document) {
             $this->classTermsArray[$key][0] = $document->getArticleID()->getCategory();
@@ -86,6 +74,8 @@ class NaiveBayes
             $content = preg_replace('/[0-9]+/', '', $content);
             //stemming
             $array = explode(" ", $content);
+            //reduces extra stop words
+            $array = $help->stopWordsReduction($array);
             $array = $help->stemTerms($array);
             foreach($array as $k => $v){
                 if(strlen($v) <3 || strlen($v) > 20 ){
@@ -93,7 +83,7 @@ class NaiveBayes
                 }
             }
 
-           // $array = array_unique($array); macht ergebnisse schlechter
+            //$array = array_unique($array);// macht ergebnisse schlechter
 
             $this->classTermsArray[$key][1] = $array;
         }
@@ -136,9 +126,7 @@ class NaiveBayes
        {
            //total number of documents
            $totalDocCount = array_sum($this->documents);
-        /*   print("<pre>");
-           print_r($testDocument);
-           print("</pre>");*/
+
 
         $scores = array();
 
