@@ -60,16 +60,26 @@ class SemanticFingerprinting
         $trainingNumb = ceil($count*0.80);
         $testingNumb = floor($count*0.20);
 
+        $this->threshold = floor($trainingNumb*0.7);
+
+        print_r("<pre>");
+        print_r('<br>-------------------<br>');
+        print_r($this->threshold);
+        print_r('<br>-------------------<br>');
+        print_r("</pre>");
+
         $help->shuffle_assoc($this->dataTerms);
 
         $this->trainingsData = array_slice($this->dataTerms, 0,$trainingNumb,true);
         $this->testData = array_slice($this->dataTerms, $trainingNumb,$testingNumb,true);
 
         //innerhalb von texten unique wörter, aber innerhalb einer klasse nicht
+        //jedes doc mit key und allen wörter + weights
         $this->trainVector= $this->tfidf();
 
 
-    foreach($this->trainVector as $textID =>$values){
+        // zählt wie viele docs es für welche klasse gibt => $labels
+        foreach($this->trainVector as $textID =>$values){
             $cat = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
             if(!array_key_exists($cat,$labels)){
                 $labels[$cat] = 0;
@@ -81,28 +91,39 @@ class SemanticFingerprinting
         print_r($this->trainVector);
         print_r("</pre>");*/
 
+        #TODO
         $this->contextLabelMap = $this->createContextMap($labels);
 
+        /*print_r("<pre>");
+        print_r($this->contextLabelMap);
+        print_r('<br>-------------------<br>');
+        print_r($this->contextMap);
+        print_r("</pre>");*/
 
         //get all words of each train class and count
+        //erstellt data klasse und alle wörter die darin vorkommen mit häufigkeit in der klasse
          foreach($this->trainVector as $key => $doc){
              $cat = $this->trainingsData[$key]->getArticleID()->getCategory();
              $this->prepareClassifier($cat,array_keys($this->trainVector[$key]));
          }
 
+         /*   $sim = new CosineSimilarity();
 
-     $sim = new CosineSimilarity();
-
-        $similarity = $sim->similarity($this->data['sport'],$this->data['football']);
-        print_r("<br>");
-        print_r("SIMILARITY = ");
-        print_r($similarity);
-        print_r("<br>");
+         $similarity = $sim->similarity($this->data['politics'],$this->data['world news']);
+         print_r("<br>");
+         print_r("SIMILARITY = ");
+         print_r($similarity);
+         print_r("<br>");*/
 
         //whole category for category fp
        foreach($this->data as $key => $words){
            $this->createCategoryFingerprints($key,$words);
         }
+
+
+        print_r("<pre>");
+        print_r($this->categoryFingerprints);
+        print_r("</pre>");
 
       // $this->createSimilarityMatrix();
 
@@ -111,7 +132,52 @@ class SemanticFingerprinting
         $help->exportFingerprint("catfp_politics",$this->categoryFingerprints['politics']);*/
     }
 
-   // protected function prepareClassifier($class, $termArray,$key){
+    protected function createContextMap($labels){
+
+        $test= null;
+
+        //foreach(array_keys($labels) as $class){
+        foreach($this->trainVector as $textID => $val) {
+            $indexSim = [];
+            $cat = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
+
+
+            // if($class == $cat ){
+            //sammelt alle similarities
+            for ($i = 0; $i < count($this->contextMap); $i++) {
+                $indexSim[$i] = $this->getSimilarity($this->trainVector[$textID], $this->trainVector[$this->contextMap[$i]]);
+            }
+            // wenn erstes doc eingefügt wird
+            if (count($indexSim) == 0) {
+                $this->contextMap[0] = $textID;
+                $test[0] = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
+            } else {
+                // finde das doc mit höchster similarity
+                arsort($indexSim);
+                // berechne die position zum einfügen
+                $pastBehind = current(array_keys($indexSim)) + 1;
+                // füge die ID an der richtigen stelle ein
+                array_splice($this->contextMap, $pastBehind, 0, $textID);
+                array_splice($test, $pastBehind, 0, trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' '))));
+
+            }
+            // }
+        }
+        // }
+
+        $context_label_map = null;
+        foreach($this->contextMap as $val){
+            $cat = $this->dataTerms[$val]->getArticleID()->getCategory();
+            // $cat = explode(" ",$cat);
+            $cat=trim(strtolower(strstr($cat, ' ')));
+            // $this->contextLabelMap[$cat][]=$val ;
+            $context_label_map[$val] =$cat;
+        }
+
+        return $context_label_map;
+    }
+
+    // protected function prepareClassifier($class, $termArray,$key){
     protected function prepareClassifier($class, $termArray){
         //$cat = explode(" ",$class);
         $cat=trim(strtolower(strstr($class, ' ')));
@@ -130,56 +196,114 @@ class SemanticFingerprinting
         ksort($this->data[$class]);
     }
 
-    function createCategoryFingerprints($category,$words){
+    protected function createCategoryFingerprints($class,$words){
 
         $stack = null;
-        $this->categoryFingerprints[$category] = [];
-        $array = array_fill(0,count($this->trainVector),0);
+        $this->categoryFingerprints[$class] = [];
+        //erstellt leeren fingerprint so lang wie es documente im trainset gibt
+        $categoryFP = array_fill(0,count($this->trainVector),0);
 
 
         foreach($words as $word => $numb){
-            $array = $this->getStackOfWordSDRs($word,$array,$numb);
+            $categoryFP = $this->getStackOfWordSDRs($word,$categoryFP,$numb);
         }
 
-        $stack[$category] = $array;
-        arsort($stack[$category]);
+        $stack[$class] = $categoryFP;
+        arsort($stack[$class]);
 
+        //höchste stacks herausschneiden
+        $threshold = array_slice($stack[$class],0,$this->threshold,true);
 
-        $threshold = array_slice($stack[$category],0,$this->threshold,true);
+        //zurücksetzen auf 0n und 1en
+        $this->categoryFingerprints[$class] = $this->getTextSDR($stack[$class],$threshold);
 
+        //$this->categoryFingerprints[$class] = $this->getWeightedTextSDR($stack[$class],$threshold,array_sum($stack[$class]));
 
-        $this->categoryFingerprints[$category] = $this->getTextSDR($stack[$category],$threshold);
-        ksort($this->categoryFingerprints[$category]);
+        // 0 -> max id aufsteigend sortiern
+        ksort($this->categoryFingerprints[$class]);
 
     }
 
+    protected function getStackOfWordSDRs($word,$categoryFP,$numb){
+        foreach($this->contextMap as $key => $index) {
+            if(array_key_exists($word,$this->trainVector[$index])){
+                $categoryFP[$key] += 1*$numb;
+            }else{
+                $categoryFP[$key] += 0;
+            }
+        }
+        return $categoryFP;
+    }
+
+    protected function getTextSDR($stackedFP,$threshold){
+        $array = null;
+        //only biggest stacks are marked in the text SDR
+        foreach($stackedFP as $id => $value){
+            if(array_key_exists($id,$threshold)){
+                $array[$id] = 1;
+            }else{
+                $array[$id] = 0;
+            }
+        }
+        return $array;
+    }
+
+    protected function getWeightedTextSDR($stackedFP,$threshold,$total){
+        $array = null;
+
+        $totalNumbWords = $total;
+        print_r("<pre>");
+        print_r("---".$totalNumbWords."---");
+        print_r("</pre>");
+
+        print_r("<pre>");
+        print_r($threshold);
+        print_r("</pre>");
+        //only biggest stacks are marked in the text SDR
+        foreach($stackedFP as $id => $value){
+            if(array_key_exists($id,$threshold)){
+                $array[$id] = $value/$totalNumbWords;
+            }else{
+                $array[$id] = 0;
+            }
+        }
+        return $array;
+    }
+
     public function classify($testDoc){
-        $testArray = $this->prepareData($testDoc->getTerms());
+        $testTerms = $this->prepareData($testDoc->getTerms());
+
+        //neu unique machen test data ??? besser oder schlechter
+         $testTerms = array_unique($testTerms);
+
         $probabilities = [];
-        $package = $this->createTestDataFingerprint($testArray);
+        $package = $this->createTestDataFingerprint($testTerms);
         $fingerprint = $package['fp'];
 
        // $class = array_values($this->contextLabelMap)[$package['highestContext']];
         $class = $package['highestContext'];
         ksort($fingerprint);
 
+        print_r("<pre>");
+        print_r($fingerprint);
+        print_r("</pre>");
+
         //$help = new Helper();
        // $help->exportFingerprint("testfp-filmPolitics02",$fingerprint);
 
         $sim = new CosineSimilarity();
 
-
-
         foreach($this->categoryFingerprints as $cat => $key){
             $probabilities[$cat] = 0;
             //semantic closeness!!!
             $probabilities[$cat] =  $sim->similarity($key,$fingerprint);
+
         }
 
       //topic overlaps
         $overlaps = [];
         foreach($fingerprint as $i => $k){
-            if($k == 1){
+            if($k > 0){
                 if(!array_key_exists($this->contextLabelMap[$this->contextMap[$i]],$overlaps)){
                     $overlaps[$this->contextLabelMap[$this->contextMap[$i]]]=0;
                 }
@@ -189,9 +313,9 @@ class SemanticFingerprinting
 
         arsort($probabilities);
 
-        print_r("<pre>");
+       /* print_r("<pre>");
         print_r($overlaps);
-        print_r("</pre>");
+        print_r("</pre>");*/
 
        /* //weighting is möglich aber nicht immer von vorteil
        if(current(array_keys($probabilities)) != $class){
@@ -205,25 +329,24 @@ class SemanticFingerprinting
             $probabilities[$class] += 0.0001;
         }
         arsort($probabilities);
-
-       return $probabilities;
+        $pack['prob'] = $probabilities;
+        $pack['over'] = $overlaps;
+       return $pack;
     }
 
-    function createTestDataFingerprint($testArray){
+    function createTestDataFingerprint($testTerms){
         $stack = null;
-        $fingerprint = [];
-        //create all word SDRs
-        foreach($testArray as $k => $word){
-            $stack[$word] = $this->getWordSDR($word);
+        $testFP = array_fill(0,count($this->contextMap),0);
+
+        //create stacked word SDRs
+        foreach($testTerms as $k => $word){
+            $testFP = $this->getStackOfWordSDRs($word,$testFP,1);
         }
 
-
-        //get the highest values
-        $tmp = $this->calculateThreshold($stack);
+        $tmp = $testFP;
         arsort($tmp);
 
         $threshold = array_slice($tmp,0,$this->threshold,true);
-
 
         //get durchschnitts classe in threshold
        $presentClass = [];
@@ -238,77 +361,10 @@ class SemanticFingerprinting
         arsort($presentClass);
 
         //return $threshold;
-        $fpPackage['fp'] = $this->getTextSDR($tmp,$threshold);
+       $fpPackage['fp'] = $this->getTextSDR($tmp,$threshold);
+      // $fpPackage['fp'] = $this->getWeightedTextSDR($tmp,$threshold,count($testTerms));
         $fpPackage['highestContext'] =  current(array_keys($presentClass)); //array_slice($tmp,0,5,true);
         return $fpPackage;
-    }
-
-
-    protected function createContextMap($labels){
-
-        $test= null;
-
-        //foreach(array_keys($labels) as $class){
-            foreach($this->trainVector as $textID => $val) {
-                $indexSim = [];
-                $cat = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
-
-
-            // if($class == $cat ){
-                    for ($i = 0; $i < count($this->contextMap); $i++) {
-                        $indexSim[$i] = $this->getSimilarity($this->trainVector[$textID], $this->trainVector[$this->contextMap[$i]]);
-                    }
-                    if (count($indexSim) == 0) {
-                        $this->contextMap[0] = $textID;
-                        $test[0] = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
-                    } else {
-                        arsort($indexSim);
-
-                        $pastBehind = current(array_keys($indexSim)) + 1;
-
-
-                        array_splice($this->contextMap, $pastBehind, 0, $textID);
-                        array_splice($test, $pastBehind, 0, trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' '))));
-
-                    }
-             // }
-            }
-      // }
-
-        $array = null;
-        foreach($this->contextMap as $val){
-            $cat = $this->dataTerms[$val]->getArticleID()->getCategory();
-           // $cat = explode(" ",$cat);
-            $cat=trim(strtolower(strstr($cat, ' ')));
-            // $this->contextLabelMap[$cat][]=$val ;
-            $array[$val] =$cat;
-        }
-
-        return $array;
-    }
-
-    protected function calculateThreshold($stack){
-        $arrayStack = array_fill(0,count($this->contextMap),0);
-        //stack all word SDRs to get text SDR
-        foreach($stack as $word => $array){
-            for($i = 0; $i < count($array);$i++){
-                $arrayStack[$i] += $array[$i];
-            }
-        }
-        return $arrayStack;
-    }
-
-    protected function getTextSDR($tmp,$threshold){
-        $array = null;
-        //only biggest stacks are marked in the text SDR
-        foreach($tmp as $it => $value){
-            if(array_key_exists($it,$threshold)){
-                $array[$it] = 1;
-            }else{
-                $array[$it] = 0;
-            }
-        }
-        return $array;
     }
 
     protected function getWordSDR($word){
@@ -324,16 +380,21 @@ class SemanticFingerprinting
         return $array;
     }
 
-    protected function getStackOfWordSDRs($word,$array,$numb){
-        foreach($this->contextMap as $key => $index) {
-            if(array_key_exists($word,$this->trainVector[$index])){
-                $array[$key] += 1*$numb;
-            }else{
-                $array[$key] += 0;
+
+
+
+    protected function calculateThreshold($stack){
+        $arrayStack = array_fill(0,count($this->contextMap),0);
+        //stack all word SDRs to get text SDR
+        foreach($stack as $word => $array){
+            for($i = 0; $i < count($array);$i++){
+                $arrayStack[$i] += $array[$i];
             }
         }
-        return $array;
+        return $arrayStack;
     }
+
+
 
     protected function getStackOfTextSDRs($text,$array){
         foreach($text as $key => $val) {
@@ -342,6 +403,7 @@ class SemanticFingerprinting
         return $array;
     }
 
+//  ############HELPER##################
 
     function getSimilarity($A,$B){
         $sim = new CosineSimilarity();
@@ -392,7 +454,7 @@ class SemanticFingerprinting
         $content = preg_replace('/[0-9]+/', '', $content);
         //stemming
         $array =  explode(" ",$content);
-        //$array = $help->stopWordsReduction($array);
+        $array = $help->stopWordsReduction($array);
         $array = $help->stemTerms($array);
         foreach($array as $k => $v){
             if(strlen($v) <3 || strlen($v) > 20 ){

@@ -232,21 +232,21 @@ class Helper
 
         foreach($array as $key => $value){
             $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-          /*    if( $cat == "world news" || $cat == "football"||  $cat == "fashion"  || $cat == "technology"){
+             if($cat == "travel"  || $cat == "science"/*|| $cat == "fashion" || $cat == "technology"*/){
               //test fashion whs technology $numb raus?   film und politics guuut 0.8
-                    $newArray[$key] = $value;
-                }*/
-
-               if( $cat == "sport"  ||$cat == "football" || $cat == "fashion"  ||$cat == "technology"){
                     $newArray[$key] = $value;
                 }
 
-            /*if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
-                         $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
-                         || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
-                         ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
-                        $newArray[$key] = $value;
-                    }*/
+            /*  if($cat == "sport"  || $cat == "football" || $cat == "fashion"  || $cat == "life and style"){
+                    $newArray[$key] = $value;
+                }*/
+
+            /*if(  /*$cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"||
+                $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+                   || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
+                   ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
+         $newArray[$key] = $value;
+      }*/
         }
 
 
@@ -256,12 +256,12 @@ class Helper
     // EXPORT FUNCTIONS
     public function writeFile($data){
         $article = $data->getArticleID();
-        $myfile = fopen("data2/".$article->getUid().".txt", "w") or die("Unable to open file!");
+        $myfile = fopen("data/".$article->getUid().".txt", "w") or die("Unable to open file!");
         $txt = "Category: ".$article->getCategory()."\r\n\r\n".$article->getContent();
         fwrite($myfile, $txt);
         fclose($myfile);
 
-        $myfile2 = fopen("terms2/".$article->getUid().".txt", "w") or die("Unable to open file!");
+        $myfile2 = fopen("terms/".$article->getUid().".txt", "w") or die("Unable to open file!");
         $txt2 = "Category: ".$article->getCategory()."\r\n\r\n".$data->getTerms();
         fwrite($myfile2, $txt2);
         fclose($myfile2);

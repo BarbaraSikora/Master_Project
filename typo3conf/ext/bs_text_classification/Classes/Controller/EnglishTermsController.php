@@ -1,10 +1,15 @@
 <?php
 namespace TextClassification\BsTextClassification\Controller;
 
+use NlpTools\Analysis\Idf;
+use NlpTools\Documents\TokensDocument;
+use NlpTools\Documents\TrainingSet;
 use NlpTools\Similarity\Euclidean;
+use TextClassification\BsTextClassification\Classes\AdditionalHelper\Helper;
 use TextClassification\BsTextClassification\Classes\AdditionalHelper\KNearestNeighbours;
 use TextClassification\BsTextClassification\Classes\AdditionalHelper\NaiveBayes;
 use TextClassification\BsTextClassification\Classes\AdditionalHelper\SemanticFingerprinting;
+use TextClassification\BsTextClassification\Classes\AdditionalHelper\TfIdfFeatureFactory;
 use TextClassification\BsTextClassification\Domain\Model\EnglishTerms;
 use TextClassification\BsTextClassification\Domain\Repository\EnglishTermsRepository;
 use NlpTools\Similarity\CosineSimilarity;
@@ -63,13 +68,13 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     public function listAction()
     {
         $terms = $this->englishTermsRepository->findAll();
-       /* foreach($terms as $term){
-            /*  $article = $term;
+        /* foreach($terms as $term){
+            $article = $term;
            $this->help->writeFile($article);
-        $string = $term->getArticleID()->getContent();
-            $newArray= $this->help->preprocessingData($string);
-            $term->setTerms(implode(" ",$newArray));
-            $this->updateAction($term);
+          /*tring = $term->getArticleID()->getContent();
+           $newArray= $this->help->preprocessingData($string);
+           $term->setTerms(implode(" ",$newArray));
+           $this->updateAction($term);
         }*/
         //$terms = $this->englishTermsRepository->findAll();
         $this->view->assign('datas',count($terms));
@@ -96,14 +101,14 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     {
         $dataTerms = $this->englishTermsRepository->findAll();
         $percentage = 0;
-       $dataTerms = array_values($this->help->filterSpecificCategories($dataTerms));
+        $dataTerms = array_values($this->help->filterSpecificCategories($dataTerms));
 
 
-        //$testID = 57;
+       //$testID = 57;
         $knn = new KNearestNeighbours();
         $knn->startKnn($dataTerms);
         $testData = $knn->getTestData();
-        $trainData = $knn->getTrainingsData();
+       $trainData = $knn->getTrainingsData();
 
 
         print_r("<pre>");
@@ -201,7 +206,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
             print_r("<pre>");
           // print_r($probabilities);
-            print("<br>");
+            print("Data Amounts:<br>");
             print_r(count($dataTerms));
             print("<br>");
             print_r(count($testData));
@@ -227,35 +232,51 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     protected function testSemanticFingerprinting($testData,$dataTerms,$fingerprinting)
     {
         $right = 0;
+        $errors = [];
+       // $testData = array_slice($testData,0,1,true);
 
         foreach($testData as $key => $value){
-           print_r("<br>");
-            print_r($key);
-            print_r("<br>");
+            $id = $dataTerms[$key]->getArticleID()->getUid();
+
             $cat= trim(strtolower(strstr($testData[$key]->getArticleID()->getCategory(), ' ')));
-            $probabilities = $fingerprinting->classify($testData[$key]);
-
-
-            print_r("<pre>");
-            print_r($probabilities);
-            print_r("</pre>");
-
+            $pack = $fingerprinting->classify($testData[$key]);
+            $probabilities = $pack['prob'];
+            $overlaps = $pack['over'];
 
 
             $predictedCat = current(array_keys($probabilities));
-
-
-            print_r($predictedCat);
-            print("----");
-            print_r($cat);
-            print("<br>");
 
             //compare it with the selected category
             if (strpos($cat, $predictedCat) !== false) {
                 $right = $right +1;
 
+            }else{
+                if (!isset($errors[$predictedCat.'---'.$cat])) {
+                    $errors[$predictedCat.'---'.$cat] = 0;
+                }
+                $errors[$predictedCat.'---'.$cat]++;
+
+                print_r("<br>");
+                print_r($key);
+                print_r("<br>");
+                print_r($id);
+                print_r("<br>");
+                print_r("<pre>");
+                print_r($overlaps);
+                print_r("</pre>");
+                print_r("<pre>");
+                print_r($probabilities);
+                print_r("</pre>");
+                print_r($predictedCat);
+                print("----");
+                print_r($cat);
+                print("<br>");
             }
         }
+        arsort($errors);
+        print_r("<pre>");
+        print_r($errors);
+        print_r("</pre>");
 
         return $right;
 
@@ -265,32 +286,43 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
     protected function testNaiveBayes($testData,$dataTerms,$naive){
         $right = 0;
-
+        $errors = [];
         foreach($testData as $key => $value){
             $cat= trim(strtolower(strstr($testData[$key][0], ' ')));
+            $id = $dataTerms[$key]->getArticleID()->getUid();
             $probabilities =$naive->classifyDocument($testData[$key][1]);
 
-
             $predictedCat = current(array_keys($probabilities));
-
-
-            print_r("<br>");
-            print_r($key);
-            print_r("<br>");
-            print_r("<pre>");
-            print_r($probabilities);
-            print_r("</pre>");
-            print_r($predictedCat);
-            print("----");
-            print_r($cat);
-            print("<br>");
 
             //compare it with the selected category
             if (strpos($cat, $predictedCat) !== false) {
                 $right = $right +1;
 
+            }else{
+                if (!isset($errors[$predictedCat.'---'.$cat])) {
+                    $errors[$predictedCat.'---'.$cat] = 0;
+                }
+                $errors[$predictedCat.'---'.$cat]++;
+
+                print_r("<br>");
+                print_r($key);
+                print_r("<br>");
+                print_r($id);
+                print_r("<br>");
+                print_r("<pre>");
+                print_r($probabilities);
+                print_r("</pre>");
+                print_r($predictedCat);
+                print("----");
+                print_r($cat);
+                print("<br>");
             }
         }
+
+        arsort($errors);
+        print_r("<pre>");
+        print_r($errors);
+        print_r("</pre>");
 
         return $right;
     }
@@ -298,32 +330,26 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
     protected function testKNN($testData,$dataTerms,$knn){
         $right = 0;
-        $k =15;
+        $k = 15;
         $sim = new CosineSimilarity();
         $t = array_slice($testData,0,1,true);
-
+        $errors = [];
         foreach($testData as $key => $test){
             //$key = 451;
             $id = $dataTerms[$key]->getArticleID()->getUid();
 
-            print("<br>");
-            print_r($key);
-            print("<br>");
-            print_r($id);
-            print("<br>");
+
 
             $categories=[];
             //get specific Catgeory
             $cat= trim(strtolower(strstr($dataTerms[$key]->getArticleID()->getCategory(), ' ')));;
-            $data = $knn->cosineSim($key,$sim);
+            $data = $knn->cosineSim($test,$sim);////neu!!!!
             //sort data big to low
             arsort($data);
             //get the top K neighbours
             $topK = array_slice($data,0,$k,true);
 
-           print_r("<pre>");
-            print_r($topK);
-            print_r("</pre>");
+
 
             //get categories of them (general or specific)
             foreach ($topK as $c =>$value) {
@@ -340,16 +366,9 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
                 $rank = $i+1;
                 $weighting[$categories[$i]] = $weighting[$categories[$i]]+($dist[$i]);
             }
-            print_r("<pre>");
-            print_r($categories);
-            print_r("</pre>");
 
             //sort for biggest similarity
             arsort($weighting);
-
-            print_r("<pre>");
-            print_r($weighting);
-            print_r("</pre>");
 
           /* $countCat = array_count_values($categories);
             arsort($countCat);
@@ -363,20 +382,43 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             //get the highest similarity
             $predictedCat = current(array_keys($weighting));
 
-
-
-
-            print_r($predictedCat);
-            print("----");
-            print_r($cat);
-            print("<br>");
-
             //compare it with the selected category
             if (strpos($cat, $predictedCat) !== false) {
                 $right = $right +1;
 
+            }else{
+
+                if (!isset($errors[$predictedCat.'---'.$cat])) {
+                    $errors[$predictedCat.'---'.$cat] = 0;
+                }
+                $errors[$predictedCat.'---'.$cat]++;
+
+
+                print("<br>");
+                print_r($key);
+                print("<br>");
+                print_r($id);
+                print("<br>");
+                print_r("<pre>");
+                print_r($topK);
+                print_r("</pre>");
+                print_r("<pre>");
+                print_r($categories);
+                print_r("</pre>");
+                print_r("<pre>");
+                print_r($weighting);
+                print_r("</pre>");
+                print_r($predictedCat);
+                print("----");
+                print_r($cat);
+                print("<br>");
             }
       }
+        arsort($errors);
+        print_r("<pre>");
+        print_r($errors);
+        print_r("</pre>");
+
 
         return $right;
     }

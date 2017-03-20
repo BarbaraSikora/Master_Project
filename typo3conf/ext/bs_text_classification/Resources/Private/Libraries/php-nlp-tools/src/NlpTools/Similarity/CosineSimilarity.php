@@ -66,18 +66,24 @@ class CosineSimilarity implements SimilarityInterface, DistanceInterface
         $v1_norm = sqrt($v1_norm);
 
 
-
-
-
         $v2_norm = 0.0;
         foreach ($v2 as $i=>$xi) {
-            $v2_norm += $xi*$xi;
+                $v2_norm += $xi * $xi;
         }
         $v2_norm = sqrt($v2_norm);
 
         if(($v1_norm * $v2_norm) == 0){
             return 0;
         }
+
+      /* print_r("<pre>");
+        print_r($prod);
+        print_r("<br>");
+        print_r($v1_norm);
+        print_r("<br>");
+        print_r($v2_norm);
+        print_r("<br>");
+        print_r("</pre>");*/
 
         return $prod/($v1_norm*$v2_norm);
     }

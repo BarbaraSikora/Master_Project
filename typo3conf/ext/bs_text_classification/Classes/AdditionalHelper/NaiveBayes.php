@@ -83,8 +83,6 @@ class NaiveBayes
                 }
             }
 
-            //$array = array_unique($array);// macht ergebnisse schlechter
-
             $this->classTermsArray[$key][1] = $array;
         }
 
@@ -125,11 +123,8 @@ class NaiveBayes
        public function classifyDocument($testDocument)
        {
            //total number of documents
-           $totalDocCount = array_sum($this->documents);
-
-
+        $totalDocCount = array_sum($this->documents);
         $scores = array();
-
 
         foreach ($this->classes as $class => $classCount) {
           $log = 0;
@@ -163,6 +158,8 @@ class NaiveBayes
                     $inversedWordProbability = $inversedTokenCount / (array_sum($this->classes)-$classCount);
                       // $inversedWordProbability = $inversedTokenCount / $inversedDocCount;
                       $probability = $wordProbability / ($wordProbability + $inversedWordProbability);
+                      // wahrscheinlichkeit dass das wort in dieser klasse ist (mal der whs der klasse) dividiert durch
+                      //die whs dass das wort überhaupt in irgendeiner klasse vorkommt
 
                     if ($probability === 0.0) {
                         $probability = 0.01;

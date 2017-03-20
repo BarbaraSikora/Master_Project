@@ -71,24 +71,30 @@ class KNearestNeighbours
         $this->training = ceil($count*0.80);
         $this->testing = floor($count*0.20);
 
-        $this->dataVectors= $this->tfidf();
+        $this->dataVectors= $this->tfidf($this->dataTerms);
+
         $help->shuffle_assoc($this->dataVectors);
 
         $this->trainingsData = array_slice($this->dataVectors, 0,$this->training,true);
         $this->testData = array_slice($this->dataVectors, $this->training,$this->testing,true);
 
+
+
+    }
+
+    public function createTestWeighting($termObjects){
+        return $testVectorSpace = $this->tfidf($termObjects);
     }
 
 
-
-    function cosineSim($testID,$sim){
+    function cosineSim($testTerms,$sim){
         $distances = [];
        /* print_r("<pre>");
         print_r($this->testData[$testID]);
         print_r("</pre>");*/
      foreach($this->trainingsData as $key => $value){
             //$distances[$key] = $sim->similarity($this->trainingsData[$testID],$this->trainingsData[$key]);
-            $distances[$key] = $sim->similarity($this->testData[$testID],$this->trainingsData[$key]);
+            $distances[$key] = $sim->similarity($testTerms,$this->trainingsData[$key]);
       }
         return $distances;
     }
@@ -110,10 +116,10 @@ class KNearestNeighbours
     }
 
 
-    function tfidf(){
+    function tfidf($termObjects){
         $trainSet = new TrainingSet();
 
-        foreach($this->dataTerms as $document){
+        foreach($termObjects as $document){
             $content = $document->getTerms();
             $array = $this->prepareData($content);
 
@@ -138,7 +144,7 @@ class KNearestNeighbours
             )
         );
         $i = 0;
-        foreach($this->dataTerms as $key => $d){
+        foreach($termObjects as $key => $d){
             $allValues[$key] = $ff->getFeatureArray("", $trainSet[$i]);
             $i++;
         }
