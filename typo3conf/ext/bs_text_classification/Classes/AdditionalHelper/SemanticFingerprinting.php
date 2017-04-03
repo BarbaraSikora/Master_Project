@@ -52,6 +52,35 @@ class SemanticFingerprinting
         return $this->contextMap;
     }
 
+    public function simpleStart($data,$testTerms){
+        $labels = [];
+        $this->dataTerms = $data;
+        $count = count($data);
+
+        $this->threshold = floor($count*0.7);
+        $this->trainingsData = array_slice($this->dataTerms, 0,$count,true);
+        $this->testData = $this->tfidf($testTerms);
+
+        foreach($this->trainVector as $textID =>$values){
+            $cat = trim(strtolower(strstr($this->dataTerms[$textID]->getArticleID()->getCategory(), ' ')));
+            if(!array_key_exists($cat,$labels)){
+                $labels[$cat] = 0;
+            }
+            $labels[$cat]++;
+        }
+        $this->contextLabelMap = $this->createContextMap($labels);
+        foreach($this->trainVector as $key => $doc){
+            $cat = $this->trainingsData[$key]->getArticleID()->getCategory();
+            $this->prepareClassifier($cat,array_keys($this->trainVector[$key]));
+        }
+
+        foreach($this->data as $key => $words){
+            $this->createCategoryFingerprints($key,$words);
+        }
+
+
+    }
+
     public function startSemanticFingerprinting($data){
         $labels = null;
         $this->dataTerms = $data;
@@ -62,11 +91,11 @@ class SemanticFingerprinting
 
         $this->threshold = floor($trainingNumb*0.7);
 
-        print_r("<pre>");
+        /*print_r("<pre>");
         print_r('<br>-------------------<br>');
         print_r($this->threshold);
         print_r('<br>-------------------<br>');
-        print_r("</pre>");
+        print_r("</pre>");*/
 
         $help->shuffle_assoc($this->dataTerms);
 
@@ -75,7 +104,7 @@ class SemanticFingerprinting
 
         //innerhalb von texten unique wörter, aber innerhalb einer klasse nicht
         //jedes doc mit key und allen wörter + weights
-        $this->trainVector= $this->tfidf();
+        $this->tfidf(false);
 
 
         // zählt wie viele docs es für welche klasse gibt => $labels
@@ -121,9 +150,9 @@ class SemanticFingerprinting
         }
 
 
-        print_r("<pre>");
+        /*print_r("<pre>");
         print_r($this->categoryFingerprints);
-        print_r("</pre>");
+        print_r("</pre>");*/
 
       // $this->createSimilarityMatrix();
 
@@ -270,8 +299,11 @@ class SemanticFingerprinting
         return $array;
     }
 
-    public function classify($testDoc){
-        $testTerms = $this->prepareData($testDoc->getTerms());
+    public function classify($testDoc,$testTerms){
+        if(!$testTerms){
+            $testTerms = $this->prepareData($testDoc->getTerms());
+        }
+
 
         //neu unique machen test data ??? besser oder schlechter
          $testTerms = array_unique($testTerms);
@@ -284,9 +316,9 @@ class SemanticFingerprinting
         $class = $package['highestContext'];
         ksort($fingerprint);
 
-        print_r("<pre>");
+        /*print_r("<pre>");
         print_r($fingerprint);
-        print_r("</pre>");
+        print_r("</pre>");*/
 
         //$help = new Helper();
        // $help->exportFingerprint("testfp-filmPolitics02",$fingerprint);
@@ -412,7 +444,7 @@ class SemanticFingerprinting
     }
 
 
-    function tfidf(){
+    function tfidf($testTerms){
         $trainSet = new TrainingSet();
 
         foreach($this->trainingsData as $document){
@@ -426,6 +458,15 @@ class SemanticFingerprinting
                 )
             );
 
+        }
+
+        if($testTerms){
+            $trainSet->addDocument(
+                "",
+                new TokensDocument(
+                    $testTerms[array_keys($testTerms)[0]]
+                )
+            );
         }
 
         $allValues = [];
@@ -445,8 +486,16 @@ class SemanticFingerprinting
             $i++;
         }
 
-        return $allValues;
+        $this->trainVector = $allValues;
+        if($testTerms){
+            return $ff->getFeatureArray("", $trainSet[$i])  ;
+        }else{
+            return 1;
+        }
+
     }
+
+
 
     protected function prepareData($content){
         $help = new Helper();

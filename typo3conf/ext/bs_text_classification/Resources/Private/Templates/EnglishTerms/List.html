@@ -3,16 +3,33 @@
 
 
 <f:section name="main">
-<h1>Overview</h1>
+<h2>Overview</h2>
 
-	<p>{datas} different articles found</p>
+	<p>The classification is based on {datas} different articles.</p>
 <f:flashMessages />
 
-	<f:comment></f:comment><p><f:link.action action="list" controller="EnglishData">### Show Raw Articles ###</f:link.action></p>
-	<p><f:link.action action="show">### Show Terms-List ###</f:link.action></p>
-	<p><f:link.action action="knn">### Test KNN ###</f:link.action></p>
-	<p><f:link.action action="bayes">### Test Naive Bayes ###</f:link.action></p>
-	<p><f:link.action action="fingerprinting">### Test Semantic Fingerprinting ###</f:link.action></p>
+	<div>
+		<p>
+			<f:form action="url">
+				<f:form.textfield  class="textfield" name="url" placeholder="Enter URL" property="url" required="TRUE" />
+				<f:form.submit class="link" value="Categorize my link"/>
+			</f:form>
+				<f:comment>https://www.theguardian.com/business/2017/apr/01/british-rail-franchises-foreign-owners-subsidy</f:comment>
+		</p>
+	</div>
+
+	<h4>Have a look inside</h4>
+	<div class="indent">
+		<p><f:link.action action="list" controller="EnglishData">Show Raw Articles</f:link.action></p>
+		<p><f:link.action action="show">Show Terms-List</f:link.action></p>
+	</div>
+	<h4>Test the different Algorithms</h4>
+	<div class="indent">
+		<p><f:link.action action="knn">Test KNN</f:link.action></p>
+		<p><f:link.action action="bayes">Test Naive Bayes</f:link.action></p>
+		<p><f:link.action action="fingerprinting">Test Semantic Fingerprinting</f:link.action></p>
+	</div>
+
 
 
 

@@ -194,32 +194,111 @@ class Helper
         return $array;
     }
 
-    //FILTER DATA
+    /**
+     * check url
+     *
+     * @return boolean
+     */
+    public function checkURL($url){
+
+        if(strpos($url, 'https://www.theguardian.com/') !== false){
+            // warum /science/ ???????
+            if(strpos($url, 'video') !== false || strpos($url, 'audio') !== false || strpos($url, 'picture') !== false || strpos($url, 'live') !== false || strpos($url, 'gallery') !== false) {
+                return false;
+            }else{
+                $splitted = explode("/", $url);
+                $splitted = array_filter($splitted);
+                if(count($splitted) < 7){
+                    return false;
+                }else {
+                    return true;
+                }
+            }
+        }else{
+            return false;
+        }
+    }
 
     /**
-     * action filter only big categories
+     * get terms
      *
      * @return array
      */
-    public function filterGeneralCategories($array){
+    public function getTerms($link){
+
+           $doc = new \DOMDocument();
+           $text = $this->getData($link);
+           $doc->loadHTML($text);
+           $meta = get_meta_tags($link);
+           $title = $this->getEverythingBetweenTags($text, 'title');
+           $split = preg_split('/\\|+/', $title);
+           $dataCategory = $split[count($split) - 2];
+           $dataTitle = $title;
+           $dataDescription = $meta['description'];
+           $dataContent = implode(' ', $this->pregMatchAll($text, 'p', 'p'));
+           $attr = 'datePublished';
+           $dataDate = $this->getNodeList("//div//p/time[contains(@itemprop, '{$attr}')]/@datetime", $doc);
+           $date = $dataDate[0]->nodeValue;
+           $date = str_replace('T', ' ', $date);
+           $date = str_replace('+0000', '', $date);
+
+
+
+           // preprocess Data tags weg, stopwords weg leezeichen weg, stemming
+           $dataContent = strip_tags($dataContent);
+           $dataContentTerms = $this->preprocessingData($dataContent);
+
+
+
+        //remove numbers
+        $array = preg_replace('/[0-9]+/', '', $dataContentTerms);
+        //stemming
+        //reduces extra stop words
+        $array = $this->stopWordsReduction($array);
+        $array = $this->stemTerms($array);
+        foreach($array as $k => $v){
+            if(strlen($v) <3 || strlen($v) > 20 ){
+                unset($array[$k]);
+            }
+        }
+
+        $dataContentTerms = array_filter($array);
+
+
+
+           $terms = array(
+               $dataCategory => $dataContentTerms
+           );
+
+        return $terms;
+    }
+
+
+    //FILTER DATA
+
+
+    /**
+     * action filter only 20 big categories
+     *
+     * @return array
+     */
+    public function filterTwentyCategories($array){
 
         $newArray = [];
 
         foreach($array as $key => $value){
-            $cat = explode(" ",$value->getArticleID()->getCategory());
-
-            if( $cat[0] == "world"  || $cat[0] == "sport"){
-                $newArray[$key] = $value;
-            }
-
-           /* if($cat[0] == "uk-news" || $cat[0] == "world"  || $cat[0] == "sport"  || $cat[0] == "fashion"  || $cat[0] == "football"){
-               $newArray[$key] = $value;
-            }*/
+            $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
+            if(  $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"||
+                $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+                   || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
+                   ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
+                 $newArray[$key] = $value;
+              }
         }
-
 
         return $newArray;
     }
+
 
     /**
      * action filter only big categories
@@ -232,7 +311,7 @@ class Helper
 
         foreach($array as $key => $value){
             $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-             if($cat == "travel"  || $cat == "science"/*|| $cat == "fashion" || $cat == "technology"*/){
+             if($cat == "travel"  || $cat == "business"/*|| $cat == "fashion" || $cat == "technology"*/){
               //test fashion whs technology $numb raus?   film und politics guuut 0.8
                     $newArray[$key] = $value;
                 }

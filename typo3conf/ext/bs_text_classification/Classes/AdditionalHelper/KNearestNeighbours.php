@@ -62,6 +62,14 @@ class KNearestNeighbours
         return $this->dataTerms;
     }
 
+    public function simpleStart($data,$testTerms){
+        $this->dataTerms = $data;
+        $count = count($data);
+
+
+        $this->testData = $this->tfidf($this->dataTerms,$testTerms);
+        $this->trainingsData = array_slice($this->dataVectors, 0,$count,true);
+    }
 
 
     public function startKnn($data){
@@ -71,7 +79,7 @@ class KNearestNeighbours
         $this->training = ceil($count*0.80);
         $this->testing = floor($count*0.20);
 
-        $this->dataVectors= $this->tfidf($this->dataTerms);
+         $this->tfidf($this->dataTerms,false);
 
         $help->shuffle_assoc($this->dataVectors);
 
@@ -81,11 +89,6 @@ class KNearestNeighbours
 
 
     }
-
-    public function createTestWeighting($termObjects){
-        return $testVectorSpace = $this->tfidf($termObjects);
-    }
-
 
     function cosineSim($testTerms,$sim){
         $distances = [];
@@ -116,7 +119,7 @@ class KNearestNeighbours
     }
 
 
-    function tfidf($termObjects){
+    function tfidf($termObjects,$testTerms){
         $trainSet = new TrainingSet();
 
         foreach($termObjects as $document){
@@ -130,6 +133,15 @@ class KNearestNeighbours
                 )
             );
 
+        }
+
+        if($testTerms){
+            $trainSet->addDocument(
+                "",
+                new TokensDocument(
+                    $testTerms[array_keys($testTerms)[0]]
+                )
+            );
         }
 
         $allValues = [];
@@ -149,7 +161,13 @@ class KNearestNeighbours
             $i++;
         }
 
-        return $allValues;
+        $this->dataVectors = $allValues;
+        if($testTerms){
+            return $ff->getFeatureArray("", $trainSet[$i])  ;
+        }else{
+            return 1;
+        }
+
     }
 
 }

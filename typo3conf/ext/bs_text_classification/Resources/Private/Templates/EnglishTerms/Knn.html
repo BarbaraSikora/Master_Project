@@ -3,14 +3,38 @@
 
 <f:section name="main">
 
-    <f:link.action action="list">Back to Overview</f:link.action>
+    <f:link.action class="back" action="list">Back to Overview</f:link.action>
 
-    <br>
-    Correct classified:
-    {data}
-    <f:comment><f:for each="{data}" as="d" key="k">
-        <p>{k} ----- {d}</p>
-    </f:for></f:comment>
+    <h2>K-nearest-neighbour Classifier</h2>
 
+    <h3>Results</h3>
+    <div class="intend">
+        <table class="border">
+            <tr>
+                <th>Number of Categories</th>
+                <td>{data.countCats}</td>
+            </tr>
+            <tr>
+                <th>Total Number of Test Documents</th>
+                <td>  {data.countTestDocs}</td>
+            </tr>
+            <tr>
+                <th>Correct classified Documents</th>
+                <td> {data.correct}</td>
+            </tr>
+            <tr>
+                <th>Accuracy</th>
+                <td>{data.accuracy}</td>
+            </tr>
+            <tr>
+                <th>Categories</th>
+                <td>
+                    <f:for each="{data.categories}" as="d" key="k">
+                        <span>{d}</span>
+                    </f:for>
+                </td>
+            </tr>
+        </table>
+    </div>
 
 </f:section>

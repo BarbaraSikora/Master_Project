@@ -123,10 +123,13 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
        // $this->help->exportCategories($dataTerms);
        //$this->help->exportComparisonTwoFiles($knn);
 
-        $percentage = $this->testKNN($testData,$dataTerms,$knn);
-        //$percentage = $this->testKNN($trainData,$dataTerms,$knn);
+        $result = $this->testKNN($testData,$dataTerms,$knn);
+        $percentage = $result['correct'];
 
-        $this->view->assign('data',$percentage );
+        $result['countTestDocs']=count($testData);
+        $result['accuracy']=($percentage/count($testData))*100;
+
+        $this->view->assign('data',$result );
 
 
     }
@@ -160,9 +163,13 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         print_r($cat);
         print("<br>");*/
 
-       $percentage = $this->testNaiveBayes($testData,$dataTerms,$naive);
+        $result = $this->testNaiveBayes($testData,$dataTerms,$naive);
+        $percentage = $result['correct'];
 
-        $this->view->assign('data',$percentage );
+        $result['countTestDocs']=count($testData);
+        $result['accuracy']=($percentage/count($testData))*100;
+
+        $this->view->assign('data',$result );
 
     }
 
@@ -214,13 +221,67 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
 
 
-       $percentage = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
+       $result = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
+        $percentage = $result['correct'];
 
-        $this->view->assign('data',$percentage );
+        $result['countTestDocs']=count($testData);
+        $result['accuracy']=($percentage/count($testData))*100;
+
+        $this->view->assign('data',$result );
 
 
     }
 
+
+    /**
+     * action url
+     * @return void
+     */
+    public function urlAction()
+    {
+        $url = $this->request->getArgument('url');
+        $data = [];
+        $resultNaive = [];
+        $resultKnn = [];
+        $resultSemantic = [];
+        $knn = new KNearestNeighbours();
+        $naive = new NaiveBayes();
+        $fingerprinting = new SemanticFingerprinting();
+
+        if(!$this->help->checkURL($url)){
+            $data = "false";
+        }else{
+            $testTerms = $this->help->getTerms($url);
+            $data['class'] =  array_keys($testTerms)[0];
+            $dataTerms = $this->englishTermsRepository->findAll();
+            $dataTerms = $this->help->filterSpecificCategories($dataTerms);
+
+
+           // $naive->simpleStart($dataTerms);
+           // $knn->simpleStart($dataTerms,$testTerms);
+            //$testTermsWeighted = $knn->getTestData();
+            $fingerprinting->simpleStart($dataTerms,$testTerms);
+
+
+
+           // $resultNaive = $this->simpleBayesTest($testTerms,$naive);
+          //  $resultKnn = $this->simpleKnnTest($testTermsWeighted,$dataTerms,$knn);
+            $resultSemantic = $this->simpleSemanticTest($testTerms,$fingerprinting);
+
+
+
+
+
+
+        }
+
+        $data['bayes'] = $resultNaive;
+        $data['knn'] = $resultKnn;
+        $data['sem'] = $resultSemantic;
+
+//57437
+        $this->view->assign('data',$data );
+    }
 
 
 
@@ -229,17 +290,85 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
     //////////////////TEST FUNCTIONS/////////////////////////////
 
+    protected function simpleSemanticTest($testTerms,$fingerprinting){
+        $package = [];
+        $cat= array_keys($testTerms)[0];
+        $content = $testTerms[$cat];
+
+        print_r("<pre>");
+        print_r($content);
+        print_r("</pre>");
+
+        $pack = $fingerprinting->classify(false,$content);
+        $probabilities = $pack['prob'];
+
+        $package['categories'] = array_slice($probabilities,0,5,true);
+        return $package;
+    }
+
+    protected function simpleBayesTest($testTerms,$naive){
+        $package = [];
+        $cat= array_keys($testTerms)[0];
+        $content = $testTerms[$cat];
+
+        $probabilities =$naive->classifyDocument($content);
+
+        $package['categories'] = array_slice($probabilities,0,5,true);
+        return $package;
+    }
+
+    protected function simpleKnnTest($testTerms,$dataTerms,$knn){
+        $package = [];
+        $k = 15;
+        $cat= array_keys($testTerms)[0];
+        $content = $testTerms;
+        $sim = new CosineSimilarity();
+        $categories=[];
+
+        $data = $knn->cosineSim($content,$sim);
+        arsort($data);
+
+
+        //get the top K neighbours
+        $topK = array_slice($data,0,$k,true);
+
+        //get categories of them (general or specific)
+        foreach ($topK as $c =>$value) {
+            $a=trim(strtolower(strstr($dataTerms[$c]->getArticleID()->getCategory(), ' ')));
+            $categories[] = $a;
+        }
+
+
+
+        $weighting = [];
+        $dist = array_slice($topK,0,$k);
+
+        //summing up similarities for different classes
+        foreach($dist as $i => $v){
+            $weighting[$categories[$i]] = $weighting[$categories[$i]]+($dist[$i]);
+        }
+
+        //sort for biggest similarity
+        arsort($weighting);
+
+        $package['categories'] = array_slice($weighting,0,5,true);
+        return $package;
+    }
+
+
     protected function testSemanticFingerprinting($testData,$dataTerms,$fingerprinting)
     {
         $right = 0;
         $errors = [];
+        $package = [];
+        $probabilities =[];
        // $testData = array_slice($testData,0,1,true);
 
         foreach($testData as $key => $value){
             $id = $dataTerms[$key]->getArticleID()->getUid();
 
             $cat= trim(strtolower(strstr($testData[$key]->getArticleID()->getCategory(), ' ')));
-            $pack = $fingerprinting->classify($testData[$key]);
+            $pack = $fingerprinting->classify($testData[$key],false);
             $probabilities = $pack['prob'];
             $overlaps = $pack['over'];
 
@@ -256,7 +385,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
                 }
                 $errors[$predictedCat.'---'.$cat]++;
 
-                print_r("<br>");
+              /*  print_r("<br>");
                 print_r($key);
                 print_r("<br>");
                 print_r($id);
@@ -270,7 +399,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
                 print_r($predictedCat);
                 print("----");
                 print_r($cat);
-                print("<br>");
+                print("<br>");*/
             }
         }
         arsort($errors);
@@ -278,7 +407,11 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         print_r($errors);
         print_r("</pre>");
 
-        return $right;
+        $package['categories'] = array_keys($probabilities);
+        $package['countCats'] = sizeof($probabilities);
+        $package['correct'] = $right;
+
+        return $package;
 
     }
 
@@ -287,12 +420,15 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     protected function testNaiveBayes($testData,$dataTerms,$naive){
         $right = 0;
         $errors = [];
+        $package = [];
+        $probabilities = [];
         foreach($testData as $key => $value){
             $cat= trim(strtolower(strstr($testData[$key][0], ' ')));
             $id = $dataTerms[$key]->getArticleID()->getUid();
             $probabilities =$naive->classifyDocument($testData[$key][1]);
 
             $predictedCat = current(array_keys($probabilities));
+
 
             //compare it with the selected category
             if (strpos($cat, $predictedCat) !== false) {
@@ -323,8 +459,10 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         print_r("<pre>");
         print_r($errors);
         print_r("</pre>");
-
-        return $right;
+        $package['categories'] = array_keys($probabilities);
+        $package['countCats'] = sizeof($probabilities);
+        $package['correct'] = $right;
+        return $package;
     }
 
 
@@ -334,6 +472,8 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $sim = new CosineSimilarity();
         $t = array_slice($testData,0,1,true);
         $errors = [];
+        $package = [];
+        $categoryNames = [];
         foreach($testData as $key => $test){
             //$key = 451;
             $id = $dataTerms[$key]->getArticleID()->getUid();
@@ -365,6 +505,10 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             foreach($dist as $i => $v){
                 $rank = $i+1;
                 $weighting[$categories[$i]] = $weighting[$categories[$i]]+($dist[$i]);
+                if(!isset($categoryNames[$categories[$i]])){
+                    $categoryNames[$categories[$i]] = 0;
+                }
+                $categoryNames[$categories[$i]] ++;
             }
 
             //sort for biggest similarity
@@ -419,8 +563,11 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         print_r($errors);
         print_r("</pre>");
 
+        $package['categories'] = array_keys($categoryNames);
+        $package['countCats'] = sizeof($categoryNames);
+        $package['correct'] = $right;
 
-        return $right;
+        return $package;
     }
 
     protected function testWeightedKNN($testData,$dataTerms,$knn){

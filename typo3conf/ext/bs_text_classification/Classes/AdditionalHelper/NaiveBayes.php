@@ -42,6 +42,17 @@ class NaiveBayes
         return $this->testData;
     }
 
+    public function simpleStart($data)
+    {
+        $count = count($data);
+        $this->prepareData($data);
+        $this->trainingsData = array_slice($this->classTermsArray, 0,$count,true);
+
+        foreach($this->trainingsData as $key => $doc){
+            $this->trainClassifier($this->trainingsData[$key][0],$this->trainingsData[$key][1]);
+        }
+    }
+
 
     public function startNaiveBayes($data)
     {

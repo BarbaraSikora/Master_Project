@@ -1,0 +1,90 @@
+body {
+    background-color: #403E33;
+    font-family: "Myriad Pro", "Myriad Web", "Tahoma", "Helvetica", "Arial", sans-serif;
+    margin: 2%;
+}
+
+a{
+    background-color: #FFF8CA;
+    padding: 8px;
+    color: #403E33;
+    text-decoration: none;
+}
+
+a:hover,.link:hover{
+    background-color: #E5DFB6;
+    color:#403E33;
+}
+
+h1{
+    color:#FFF8CA;
+    width:800px;
+    float:left;
+    border-bottom: #FFF8CA 2px solid;
+}
+
+h2,h4,h3,table{
+    color:#FFF8CA;
+}
+
+p{
+    color:#FFF8CA;
+}
+
+.csc-header-date{
+    width:50px;
+    float:right;
+}
+
+.tx-bs-text-classification{
+    clear:both;
+    margin-left:50px;
+}
+
+.csc-subheader{
+    clear:both;
+}
+
+
+.intend{
+    margin-left:15px;
+    color:#FFF8CA;
+}
+
+.back{
+    float:right;
+}
+
+th{
+    text-align:left;
+}
+
+tr{
+    text-align:right;
+}
+
+.textfield{
+    width:500px;
+    margin:5px;
+}
+
+.link{
+    font-size: inherit;
+    cursor: pointer;
+    border:none;
+    background-color: #FFF8CA;
+    font-family: "Myriad Pro", "Myriad Web", "Tahoma", "Helvetica", "Arial", sans-serif;
+    padding: 8px;
+    color: #403E33;
+    text-decoration: none;
+}
+
+.border {
+    border-collapse: collapse;
+    border-style: hidden;
+}
+
+.border td, .border th {
+    border: 1px solid #FFF8CA;
+    width: 400px;
+}

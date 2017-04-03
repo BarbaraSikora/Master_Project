@@ -43,3 +43,4 @@ plugin.tx_bstextclassification._CSS_DEFAULT_STYLE (
 	}
 
 )
+

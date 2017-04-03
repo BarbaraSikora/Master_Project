@@ -1,0 +1,48 @@
+<f:layout name="Default" />
+
+
+<f:section name="main">
+
+    <f:link.action class="back" action="list">Back to Overview</f:link.action>
+
+    <h2>Single URL Classifier</h2>
+
+    <h3>Results</h3>
+    <div class="intend">
+        <table class="border">
+            <tr>
+                <th>Tested Class</th>
+                <td>{data.class}</td>
+            </tr>
+            <tr>
+                <th>Naive Bayes Predicted Categories</th>
+                <td>
+                    <f:for each="{data.bayes.categories}" as="d" key="k">
+                        <p>{k}, {d}</p>
+                    </f:for>
+
+                </td>
+            </tr>
+            <tr>
+                <th>Knn Predicted Categories</th>
+                <td>
+                    <f:for each="{data.knn.categories}" as="d" key="k">
+                        <p>{k}, {d}</p>
+                    </f:for>
+
+                </td>
+            </tr>
+            <tr>
+                <th>Sem. Fipri. Predicted Categories</th>
+                <td>
+                    <f:for each="{data.sem.categories}" as="d" key="k">
+                        <p>{k}, {d}</p>
+                    </f:for>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+
+</f:section>
