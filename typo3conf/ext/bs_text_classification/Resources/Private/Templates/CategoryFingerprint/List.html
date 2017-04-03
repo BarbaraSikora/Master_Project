@@ -1,0 +1,29 @@
+
+<f:layout name="Default" />
+
+
+
+<f:section name="main">
+<h1>Listing for CategoryFingerprint</h1>
+
+<f:flashMessages />
+
+<table  class="tx_bstextclassification" >
+	<tr>
+		<th><f:translate key="tx_bstextclassification_domain_model_categoryfingerprint.category_name" /></th>
+		<th><f:translate key="tx_bstextclassification_domain_model_categoryfingerprint.fingerprint" /></th>
+		<th> </th>
+		<th> </th>
+	</tr>
+
+	<f:for each="{categoryFingerprints}" as="categoryFingerprint">
+		<tr>
+			<td><f:link.action action="show" arguments="{categoryFingerprint : categoryFingerprint}"> {categoryFingerprint.categoryName}</f:link.action></td>
+			<td><f:link.action action="show" arguments="{categoryFingerprint : categoryFingerprint}"> {categoryFingerprint.fingerprint}</f:link.action></td>
+			<td><f:link.action action="edit" arguments="{categoryFingerprint : categoryFingerprint}">Edit</f:link.action></td>
+			<td><f:link.action action="delete" arguments="{categoryFingerprint : categoryFingerprint}">Delete</f:link.action></td>
+		</tr>
+	</f:for>
+</table>
+
+</f:section>

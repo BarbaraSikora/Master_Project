@@ -150,6 +150,66 @@
                     "relations": []
                 }
             }
+        },
+        {
+            "config": {
+                "position": [
+                    1031,
+                    208
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_list": true,
+                    "_default1_show": true,
+                    "_default2_new_create": true,
+                    "_default3_edit_update": true,
+                    "_default4_delete": true,
+                    "customActions": []
+                },
+                "name": "CategoryFingerprint",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": false,
+                    "categorizable": false,
+                    "description": "",
+                    "mapToTable": "",
+                    "parentClass": "",
+                    "sorting": false,
+                    "type": "Entity",
+                    "uid": "817841390254"
+                },
+                "propertyGroup": {
+                    "properties": [
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsRequired": false,
+                            "propertyName": "categoryName",
+                            "propertyType": "String",
+                            "uid": "1453057040229"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsRequired": false,
+                            "propertyName": "fingerprint",
+                            "propertyType": "String",
+                            "uid": "549340430964"
+                        }
+                    ]
+                },
+                "relationGroup": {
+                    "relations": []
+                }
+            }
         }
     ],
     "properties": {
@@ -207,7 +267,7 @@
         }
     ],
     "log": {
-        "last_modified": "2016-12-18 08:28",
+        "last_modified": "2017-04-03 02:33",
         "extension_builder_version": "7.6.0",
         "be_user": " (1)"
     }

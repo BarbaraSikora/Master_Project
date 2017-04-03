@@ -27,7 +27,7 @@ namespace TextClassification\BsTextClassification\Domain\Repository;
 /**
  * The repository for Terms
  */
-class EnglishTermsRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
+class CategoryFingerprintRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
 
 }

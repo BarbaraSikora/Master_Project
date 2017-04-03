@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2016-12-18T20:28:56Z" product-name="bs_text_classification">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-04-03T14:33:44Z" product-name="bs_text_classification">
 		<header/>
 		<body>
 			<trans-unit id="tx_bstextclassification_domain_model_englishterms">
@@ -29,6 +29,15 @@
 			</trans-unit>
 			<trans-unit id="tx_bstextclassification_domain_model_englishdata.date_published">
 				<source>Date Published</source>
+			</trans-unit>
+			<trans-unit id="tx_bstextclassification_domain_model_categoryfingerprint">
+				<source>Category Fingerprint</source>
+			</trans-unit>
+			<trans-unit id="tx_bstextclassification_domain_model_categoryfingerprint.category_name">
+				<source>Category Name</source>
+			</trans-unit>
+			<trans-unit id="tx_bstextclassification_domain_model_categoryfingerprint.fingerprint">
+				<source>Fingerprint</source>
 			</trans-unit>
 		</body>
 	</file>

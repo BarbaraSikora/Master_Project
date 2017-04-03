@@ -1,6 +1,5 @@
 <?php
 namespace TextClassification\BsTextClassification\Controller;
-
 use TextClassification\BsTextClassification\Domain\Model\EnglishData;
 use TextClassification\BsTextClassification\Domain\Repository\EnglishDataRepository;
 /***************************************************************
@@ -27,13 +26,11 @@ use TextClassification\BsTextClassification\Domain\Repository\EnglishDataReposit
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 /**
  * EnglishDataController
  */
 class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
-
     /**
      * help
      *
@@ -41,7 +38,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
      * @inject
      */
     protected $help = null;
-
     /**
      * englishDataRepository
      *
@@ -49,7 +45,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
      * @inject
      */
     protected $englishDataRepository = NULL;
-
     /**
      * termsController
      *
@@ -57,7 +52,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
      * @inject
      */
     protected $termsController = NULL;
-
     /**
      * action data
      *
@@ -77,65 +71,54 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
         foreach ($nodelist as $node) {
             $categoryLinks[] = "{$node->nodeValue}";
         }
-
-              for ($i = 1; $i <2; $i++) {
-                    //get Article-Links of each category
-                    $url_ENG = $categoryLinks[$i];
-                    $url_ENG = str_replace('uk/', '', $url_ENG);
-                    $firstCategory = explode('/', $url_ENG);
-                    $firstCategory = $firstCategory[count($firstCategory)-1];
-                    if($firstCategory == "commentisfree"){
-                        $firstCategory = "opinion";
-                    }
-
-                    $links = array();
-                    $links = $this->help->getAllLinks($url_ENG . '/all', $links, $doc);
-
-                   /*   foreach ($links as $link) {
-                              $text = $this->help->getData($link);
-
-                              $doc->loadHTML($text);
-                              $meta = get_meta_tags($link);
-                              $title = $this->help->getEverythingBetweenTags($text, 'title');
-                              $split = preg_split('/\\|+/', $title);
-                              $dataCategory = $firstCategory . " " . $split[count($split) - 2];
-                              $dataTitle = $title;
-                              $dataDescription = $meta['description'];
-                              $dataContent = implode(' ', $this->help->pregMatchAll($text, 'p', 'p'));
-                              $attr = 'datePublished';
-                              $dataDate = $this->help->getNodeList("//div//p/time[contains(@itemprop, '{$attr}')]/@datetime", $doc);
-                              $date = $dataDate[0]->nodeValue;
-                              $date = str_replace('T', ' ', $date);
-                              $date = str_replace('+0000', '', $date);
-
-                              // preprocess Data tags weg, stopwords weg leezeichen weg, stemming
-                              $dataContent = strip_tags($dataContent);
-                              $dataContentTerms = $this->help->preprocessingData($dataContent);
-
-                              $data = array(
-                                  'datePublished' => $date,
-                                  'dataCategory' => $dataCategory,
-                                  'dataTitle' => $dataTitle,
-                                  'dataDescription' => $dataDescription,
-                                  'dataContent' => $dataContent
-                              );
-
-                              $terms = array(
-                                  'terms' => implode(" ", $dataContentTerms)
-                              );
-
-                              $this->newAction($data, $terms);
-                      }*/
-         }
-
-       // $this->termsController->listAction();
-       print "<pre>";
+        for ($i = 1; $i <2; $i++) {
+            //get Article-Links of each category
+            $url_ENG = $categoryLinks[$i];
+            $url_ENG = str_replace('uk/', '', $url_ENG);
+            $firstCategory = explode('/', $url_ENG);
+            $firstCategory = $firstCategory[count($firstCategory)-1];
+            if($firstCategory == "commentisfree"){
+                $firstCategory = "opinion";
+            }
+            $links = array();
+            $links = $this->help->getAllLinks($url_ENG . '/all', $links, $doc);
+            /*   foreach ($links as $link) {
+                       $text = $this->help->getData($link);
+                       $doc->loadHTML($text);
+                       $meta = get_meta_tags($link);
+                       $title = $this->help->getEverythingBetweenTags($text, 'title');
+                       $split = preg_split('/\\|+/', $title);
+                       $dataCategory = $firstCategory . " " . $split[count($split) - 2];
+                       $dataTitle = $title;
+                       $dataDescription = $meta['description'];
+                       $dataContent = implode(' ', $this->help->pregMatchAll($text, 'p', 'p'));
+                       $attr = 'datePublished';
+                       $dataDate = $this->help->getNodeList("//div//p/time[contains(@itemprop, '{$attr}')]/@datetime", $doc);
+                       $date = $dataDate[0]->nodeValue;
+                       $date = str_replace('T', ' ', $date);
+                       $date = str_replace('+0000', '', $date);
+                       // preprocess Data tags weg, stopwords weg leezeichen weg, stemming
+                       $dataContent = strip_tags($dataContent);
+                       $dataContentTerms = $this->help->preprocessingData($dataContent);
+                       $data = array(
+                           'datePublished' => $date,
+                           'dataCategory' => $dataCategory,
+                           'dataTitle' => $dataTitle,
+                           'dataDescription' => $dataDescription,
+                           'dataContent' => $dataContent
+                       );
+                       $terms = array(
+                           'terms' => implode(" ", $dataContentTerms)
+                       );
+                       $this->newAction($data, $terms);
+               }*/
+        }
+        // $this->termsController->listAction();
+        print "<pre>";
         print_r($links);
         print "</pre>";
-
-       // $this->redirect('list');
+        // $this->redirect('list');
     }
-
     /**
      * action list
      *
@@ -147,7 +130,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
         //$datas = "test";
         $this->view->assign('datas', $datas);
     }
-
     /**
      * action new
      *
@@ -165,7 +147,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
         $this->createAction($data);
         $this->termsController->newAction($terms,$data);
     }
-
     /**
      * action create
      *
@@ -177,7 +158,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
         //$this->addFlashMessage('The object was created.', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->englishDataRepository->add($newEnglishData);
     }
-
     /**
      * action edit
      *
@@ -189,7 +169,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     {
         $this->view->assign('data', $englishData);
     }
-
     /**
      * action update
      *
@@ -199,9 +178,8 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     public function updateAction(\TextClassification\BsTextClassification\Domain\Model\EnglishData $englishData)
     {
         $this->englishDataRepository->update($englishData);
-       // $this->redirect('list');
+        // $this->redirect('list');
     }
-
     /**
      * action delete
      *
@@ -212,7 +190,6 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     {
         $this->addFlashMessage('The object was deleted. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->englishDataRepository->remove($englishData);
-       // $this->redirect('list');
+        // $this->redirect('list');
     }
-
 }

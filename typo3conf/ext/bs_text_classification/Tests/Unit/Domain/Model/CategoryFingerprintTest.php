@@ -27,23 +27,23 @@ namespace TextClassification\BsTextClassification\Tests\Unit\Domain\Model;
  ***************************************************************/
 
 /**
- * Test case for class \TextClassification\BsTextClassification\Domain\Model\EnglishTerms.
+ * Test case for class \TextClassification\BsTextClassification\Domain\Model\CategoryFingerprint.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  * @author Barbara Sikora <barbara-sikora@gmx.at>
  */
-class EnglishTermsTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class CategoryFingerprintTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 {
 	/**
-	 * @var \TextClassification\BsTextClassification\Domain\Model\EnglishTerms
+	 * @var \TextClassification\BsTextClassification\Domain\Model\CategoryFingerprint
 	 */
 	protected $subject = NULL;
 
 	public function setUp()
 	{
-		$this->subject = new \TextClassification\BsTextClassification\Domain\Model\EnglishTerms();
+		$this->subject = new \TextClassification\BsTextClassification\Domain\Model\CategoryFingerprint();
 	}
 
 	public function tearDown()
@@ -54,24 +54,24 @@ class EnglishTermsTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 	/**
 	 * @test
 	 */
-	public function getTermsReturnsInitialValueForString()
+	public function getCategoryNameReturnsInitialValueForString()
 	{
 		$this->assertSame(
 			'',
-			$this->subject->getTerms()
+			$this->subject->getCategoryName()
 		);
 	}
 
 	/**
 	 * @test
 	 */
-	public function setTermsForStringSetsTerms()
+	public function setCategoryNameForStringSetsCategoryName()
 	{
-		$this->subject->setTerms('Conceived at T3CON10');
+		$this->subject->setCategoryName('Conceived at T3CON10');
 
 		$this->assertAttributeEquals(
 			'Conceived at T3CON10',
-			'terms',
+			'categoryName',
 			$this->subject
 		);
 	}
@@ -79,25 +79,24 @@ class EnglishTermsTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 	/**
 	 * @test
 	 */
-	public function getArticleIDReturnsInitialValueForEnglishData()
+	public function getFingerprintReturnsInitialValueForString()
 	{
-		$this->assertEquals(
-			NULL,
-			$this->subject->getArticleID()
+		$this->assertSame(
+			'',
+			$this->subject->getFingerprint()
 		);
 	}
 
 	/**
 	 * @test
 	 */
-	public function setArticleIDForEnglishDataSetsArticleID()
+	public function setFingerprintForStringSetsFingerprint()
 	{
-		$articleIDFixture = new \TextClassification\BsTextClassification\Domain\Model\EnglishData();
-		$this->subject->setArticleID($articleIDFixture);
+		$this->subject->setFingerprint('Conceived at T3CON10');
 
 		$this->assertAttributeEquals(
-			$articleIDFixture,
-			'articleID',
+			'Conceived at T3CON10',
+			'fingerprint',
 			$this->subject
 		);
 	}

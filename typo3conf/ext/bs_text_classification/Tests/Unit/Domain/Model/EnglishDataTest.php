@@ -5,7 +5,7 @@ namespace TextClassification\BsTextClassification\Tests\Unit\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2016 Barbara Sikora <barbara-sikora@gmx.at>, FH Hagenberg
+ *  (c) 2017 Barbara Sikora <barbara-sikora@gmx.at>, FH Hagenberg
  *
  *  All rights reserved
  *

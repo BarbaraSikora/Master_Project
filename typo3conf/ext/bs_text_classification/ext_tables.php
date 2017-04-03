@@ -16,3 +16,6 @@ if (!defined('TYPO3_MODE')) {
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_bstextclassification_domain_model_englishdata', 'EXT:bs_text_classification/Resources/Private/Language/locallang_csh_tx_bstextclassification_domain_model_englishdata.xlf');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_bstextclassification_domain_model_englishdata');
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_bstextclassification_domain_model_categoryfingerprint', 'EXT:bs_text_classification/Resources/Private/Language/locallang_csh_tx_bstextclassification_domain_model_categoryfingerprint.xlf');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_bstextclassification_domain_model_categoryfingerprint');
