@@ -55,11 +55,11 @@ p{
     float:right;
 }
 
-th{
+.border th{
     text-align:left;
 }
 
-tr{
+.border tr{
     text-align:right;
 }
 

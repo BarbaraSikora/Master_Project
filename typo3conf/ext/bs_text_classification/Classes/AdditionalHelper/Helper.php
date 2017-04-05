@@ -288,12 +288,12 @@ class Helper
 
         foreach($array as $key => $value){
             $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-            if(  $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"||
-                $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
-                   || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
-                   ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
-                 $newArray[$key] = $value;
-              }
+            /* if($cat == "sport" ||$cat == "uk news"  ||$cat == "opinion" || $cat == "society"  ||$cat == "business"   ||
+            $cat == "politics" || $cat == "world news" ||$cat == "life and style" ||$cat == "environment"  || $cat == "technology"
+             || $cat == "television & radio"  ||  $cat == "culture" || $cat == "art and design"  ||$cat == "film"  || $cat == "books"
+             || $cat == "us news"   ||$cat == "football"|| $cat == "fashion" ||   $cat == "travel" || $cat == "science"){  //20 categories
+                   $newArray[$key] = $value;
+                }*/
         }
 
         return $newArray;
@@ -309,23 +309,23 @@ class Helper
 
         $newArray = [];
 
-        foreach($array as $key => $value){
-            $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-             if($cat == "travel"  || $cat == "business"/*|| $cat == "fashion" || $cat == "technology"*/){
-              //test fashion whs technology $numb raus?   film und politics guuut 0.8
-                    $newArray[$key] = $value;
-                }
+    foreach($array as $key => $value){
+        $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
+         /*if($cat == "travel"  || $cat == "business"/*|| $cat == "fashion" || $cat == "technology"){
+          //test fashion whs technology $numb raus?   film und politics guuut 0.8
+                $newArray[$key] = $value;
+            }*/
+        /*
+               if(  $cat == "sport"  || $cat == "football"  || $cat == "fashion"  || $cat == "life and style"){
+                $newArray[$key] = $value;
+            }*/
 
-            /*  if($cat == "sport"  || $cat == "football" || $cat == "fashion"  || $cat == "life and style"){
-                    $newArray[$key] = $value;
-                }*/
-
-            /*if(  /*$cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"||
-                $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
-                   || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
-                   ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
-         $newArray[$key] = $value;
-      }*/
+        /*    if($cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
+       *       $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+              || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
+          ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
+       $newArray[$key] = $value;
+    }*/
         }
 
 

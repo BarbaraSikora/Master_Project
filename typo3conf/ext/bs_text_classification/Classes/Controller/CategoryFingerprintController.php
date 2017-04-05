@@ -26,6 +26,7 @@ namespace TextClassification\BsTextClassification\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TextClassification\BsTextClassification\Domain\Model\CategoryFingerprint;
 
 /**
  * CategoryFingerprintController
@@ -69,9 +70,12 @@ class CategoryFingerprintController extends \TYPO3\CMS\Extbase\Mvc\Controller\Ac
      * 
      * @return void
      */
-    public function newAction()
+    public function newAction($name,$fp)
     {
-        
+        $data = new CategoryFingerprint();
+        $data->setCategoryName($name);
+        $data->setFingerprint($fp);
+        $this->createAction($data);
     }
     
     /**
@@ -82,9 +86,8 @@ class CategoryFingerprintController extends \TYPO3\CMS\Extbase\Mvc\Controller\Ac
      */
     public function createAction(\TextClassification\BsTextClassification\Domain\Model\CategoryFingerprint $newCategoryFingerprint)
     {
-        $this->addFlashMessage('The object was created. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->categoryFingerprintRepository->add($newCategoryFingerprint);
-        $this->redirect('list');
+      //  $this->redirect('list');
     }
     
     /**
@@ -107,9 +110,9 @@ class CategoryFingerprintController extends \TYPO3\CMS\Extbase\Mvc\Controller\Ac
      */
     public function updateAction(\TextClassification\BsTextClassification\Domain\Model\CategoryFingerprint $categoryFingerprint)
     {
-        $this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
+        //$this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See http://wiki.typo3.org/T3Doc/Extension_Builder/Using_the_Extension_Builder#1._Model_the_domain', '', \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR);
         $this->categoryFingerprintRepository->update($categoryFingerprint);
-        $this->redirect('list');
+      //  $this->redirect('list');
     }
     
     /**

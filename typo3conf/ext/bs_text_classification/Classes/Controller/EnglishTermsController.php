@@ -48,6 +48,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
      * @inject
      */
     protected $help = null;
+
     /**
      * englishTermsRepository
      *
@@ -55,6 +56,22 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
      * @inject
      */
     protected $englishTermsRepository = NULL;
+
+    /**
+     * categoryFingerprintController
+     *
+     * @var \TextClassification\BsTextClassification\Controller\CategoryFingerprintController
+     * @inject
+     */
+    protected $categoryFingerprintController = NULL;
+
+    /**
+     * categoryFingerprintRepository
+     *
+     * @var \TextClassification\BsTextClassification\Domain\Repository\CategoryFingerprintRepository
+     * @inject
+     */
+    protected $categoryFingerprintRepository = NULL;
 
     /**
      * action list
@@ -156,38 +173,82 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     {
         $dataTerms = $this->englishTermsRepository->findAll();
         $percentage = 0;
+        $testData = [];
         $dataTerms = $this->help->filterSpecificCategories($dataTerms);
         $fingerprinting = new SemanticFingerprinting();
-        $fingerprinting->startSemanticFingerprinting($dataTerms);
-        $testData = $fingerprinting->getTestData();
-        //print_r($dataTerms[0]->getArticleID()->getUid());
-        // print("<br>");
-        /*   print_r($dataTerms[1056]->getArticleID()->getUid());
-            $cat= trim(strtolower(strstr($testData[1056]->getArticleID()->getCategory(), ' ')));
-            $probabilities = $fingerprinting->classify($testData[1056]);// 209, 1047, 1240, 1075, 1241, 203 falsche!!!
-            arsort($probabilities);
-            $predictedCat = current(array_keys($probabilities));
-            print_r("<pre>");
-            print_r($probabilities);
-            print_r("</pre>");
-            // 465,1825,209,1240 fashion export
-             // 31, 427,520 world news/ football
-            // 2095, 1673 film/politics
-            // vielleicht gewichten?? höchster stack wo gehört der hin zu welcher classe
-            print("<br>");
-            print_r($predictedCat);
-            print("----");
-            print_r($cat);
-            print("<br>");*/
+
+        //$contextMap = $this->categoryFingerprintRepository->findByUid(25);
+        $fingerprinting->startSemanticFingerprinting($dataTerms,0);
+        //$testData = $fingerprinting->getTestData();
+
+
+
+
+
+       /* $stacks['uk news'] = $this->categoryFingerprintRepository->findByUid(31)->getFingerprint();
+        $stacks['business'] = $this->categoryFingerprintRepository->findByUid(32)->getFingerprint();
+        $stacks['opinion'] = $this->categoryFingerprintRepository->findByUid(33)->getFingerprint();
+        $stacks['sport'] = $this->categoryFingerprintRepository->findByUid(34)->getFingerprint();
+        $stacks['society'] = $this->categoryFingerprintRepository->findByUid(35)->getFingerprint();*/
+
+        /*$stacks['politics'] = $this->categoryFingerprintRepository->findByUid(41)->getFingerprint();
+        $stacks['world news'] = $this->categoryFingerprintRepository->findByUid(43)->getFingerprint();
+        $stacks['life and style'] = $this->categoryFingerprintRepository->findByUid(45)->getFingerprint();
+        $stacks['environment'] = $this->categoryFingerprintRepository->findByUid(42)->getFingerprint();
+        $stacks['technology'] = $this->categoryFingerprintRepository->findByUid(44)->getFingerprint();*/
+
+        /*$stacks['television & radio'] = $this->categoryFingerprintRepository->findByUid(47)->getFingerprint();
+        $stacks['culture'] = $this->categoryFingerprintRepository->findByUid(46)->getFingerprint();
+        $stacks['art and design'] = $this->categoryFingerprintRepository->findByUid(50)->getFingerprint();
+        $stacks['film'] = $this->categoryFingerprintRepository->findByUid(49)->getFingerprint();
+        $stacks['books'] = $this->categoryFingerprintRepository->findByUid(48)->getFingerprint();*/
+
+       /* $stacks['us news'] = $this->categoryFingerprintRepository->findByUid(54)->getFingerprint();
+        $stacks['football'] = $this->categoryFingerprintRepository->findByUid(53)->getFingerprint();
+        $stacks['fashion'] = $this->categoryFingerprintRepository->findByUid(51)->getFingerprint();
+        $stacks['travel'] = $this->categoryFingerprintRepository->findByUid(52)->getFingerprint();
+        $stacks['science'] = $this->categoryFingerprintRepository->findByUid(55)->getFingerprint();*/
+
+
+
+     /*   $map = $fingerprinting->getCategoryFingerprints();
         print_r("<pre>");
+        print_r($map);
+        print_r("</pre>");
+      //  $map = implode(" ",$map);
+
+        foreach($map as $class => $stacks){
+            $stack = implode(" ",$stacks);
+            $this->categoryFingerprintController->newAction($class.'_FourthFive',$stack);
+        }*/
+
+
+        /*print_r("<pre>");
         // print_r($probabilities);
         print("Data Amounts:<br>");
         print_r(count($dataTerms));
         print("<br>");
         print_r(count($testData));
-        print_r("</pre>");
-        $result = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
-        $percentage = $result['correct'];
+        print_r("</pre>");*/
+
+
+        /* $result = [];
+     /*  for($i = 1; $i < 10; $i++){
+            $thres=40*$i;
+
+            $fingerprinting->startSemanticFingerprinting($dataTerms,$contextMap->getFingerprint(),$stacks,$thres);
+            $testData = $fingerprinting->getTestData();
+
+
+             $result = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
+             print("<br>------ACCUR------------<br>");
+             print_r(($result['correct']/count($testData))*100);
+             print("<br>------------------<br>");
+         }*/
+
+
+       // $result = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
+       // $percentage = $result['correct'];
         $result['countTestDocs']=count($testData);
         $result['accuracy']=($percentage/count($testData))*100;
         $this->view->assign('data',$result );
@@ -212,34 +273,55 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             $testTerms = $this->help->getTerms($url);
             $data['class'] =  array_keys($testTerms)[0];
             $dataTerms = $this->englishTermsRepository->findAll();
-            $dataTerms = $this->help->filterSpecificCategories($dataTerms);
-            // $naive->simpleStart($dataTerms);
-            // $knn->simpleStart($dataTerms,$testTerms);
+            $dataTerms = $this->help->filterTwentyCategories($dataTerms);
+            $data['number'] = count($dataTerms);
+
+             //$naive->simpleStart($dataTerms);
+             //$knn->simpleStart($dataTerms,$testTerms);
             //$testTermsWeighted = $knn->getTestData();
             $fingerprinting->simpleStart($dataTerms,$testTerms);
-            // $resultNaive = $this->simpleBayesTest($testTerms,$naive);
-            //  $resultKnn = $this->simpleKnnTest($testTermsWeighted,$dataTerms,$knn);
-            $resultSemantic = $this->simpleSemanticTest($testTerms,$fingerprinting);
+
+
+         /* $map = $fingerprinting->getContextMap();
+            print_r("<pre>");
+            print_r($map);
+            print_r("</pre>");
+            $map = implode(" ",$map);
+
+
+            $this->categoryFingerprintController->newAction("Science",$map);*/
+           /* foreach($cats as $class => $array){
+                $fp = implode(" ",$map);
+               // $this->categoryFingerprintController->newAction($class,$fp);
+            }*/
+
+           // $resultNaive = $this->simpleBayesTest($testTerms,$naive);
+          //  $resultKnn = $this->simpleKnnTest($testTermsWeighted,$dataTerms,$knn);
+         //   $resultSemantic = $this->simpleSemanticTest($testTerms,$fingerprinting);
         }
+
+
         $data['bayes'] = $resultNaive;
         $data['knn'] = $resultKnn;
         $data['sem'] = $resultSemantic;
-//57437
+
         $this->view->assign('data',$data );
     }
     //////////////////TEST FUNCTIONS/////////////////////////////
+
     protected function simpleSemanticTest($testTerms,$fingerprinting){
         $package = [];
         $cat= array_keys($testTerms)[0];
         $content = $testTerms[$cat];
-        print_r("<pre>");
+       /* print_r("<pre>");
         print_r($content);
-        print_r("</pre>");
+        print_r("</pre>");*/
         $pack = $fingerprinting->classify(false,$content);
         $probabilities = $pack['prob'];
         $package['categories'] = array_slice($probabilities,0,5,true);
         return $package;
     }
+
     protected function simpleBayesTest($testTerms,$naive){
         $package = [];
         $cat= array_keys($testTerms)[0];
@@ -248,6 +330,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $package['categories'] = array_slice($probabilities,0,5,true);
         return $package;
     }
+
     protected function simpleKnnTest($testTerms,$dataTerms,$knn){
         $package = [];
         $k = 15;
@@ -287,6 +370,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             $cat= trim(strtolower(strstr($testData[$key]->getArticleID()->getCategory(), ' ')));
             $pack = $fingerprinting->classify($testData[$key],false);
             $probabilities = $pack['prob'];
+
             $overlaps = $pack['over'];
             $predictedCat = current(array_keys($probabilities));
             //compare it with the selected category
@@ -315,9 +399,9 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             }
         }
         arsort($errors);
-        print_r("<pre>");
+      /*  print_r("<pre>");
         print_r($errors);
-        print_r("</pre>");
+        print_r("</pre>");*/
         $package['categories'] = array_keys($probabilities);
         $package['countCats'] = sizeof($probabilities);
         $package['correct'] = $right;
