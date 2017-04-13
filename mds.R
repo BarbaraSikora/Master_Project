@@ -93,7 +93,7 @@ stripchart(x2)
 
 ############################################ MDS ab hier
 
-mydata <- read.csv("C:/xampp/htdocs/Master_Project/file_sportFootballFashionLife.csv")
+mydata <- read.csv("C:/xampp/htdocs/Master_Project/file_filmpolitics.csv")
 row.names(mydata) <- mydata[, 1]
 firstCol<-mydata[,1]
 mydata<- mydata[, -1]
@@ -105,8 +105,8 @@ fit <- cmdscale(d,eig=TRUE, k=2) # k is the number of dim
 x <- fit$points[,1]
 y <- fit$points[,2]
 plot(x, y, xlab="x", ylab="y",
-     main="Sport vs Football vs Fashion vs Lifestyle", type="n")
-text(x, y, labels = firstCol, cex=1, col = c("brown4","darkblue","green","orange")[firstCol]) 
+     main="Film vs Politics", type="n")
+text(x, y, labels = firstCol, cex=1.2, col = c("darkgreen","orange")[firstCol]) 
 
 legend("topleft", c("Football","Sport","Fashion","Lifestyle"), col = c("darkblue","orange","brown4","green"),cex=1,lty=1,lwd=5, y.intersp = 0.3,x.intersp=0.3) 
 

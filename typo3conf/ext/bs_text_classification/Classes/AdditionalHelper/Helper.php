@@ -9,13 +9,8 @@ namespace TextClassification\BsTextClassification\Classes\AdditionalHelper;
 include('C:\xampp\htdocs\Master_Project\typo3conf\ext\bs_text_classification\Resources\Private\Libraries\php-nlp-tools\autoloader.php');
 use NlpTools\Analysis\FreqDist;
 use NlpTools\Analysis\Idf;
-use NlpTools\Clustering\CentroidFactories\Euclidean;
 use NlpTools\Similarity\CosineSimilarity;
-use NlpTools\Stemmers\LancasterStemmer;
 use NlpTools\Stemmers\PorterStemmer;
-use NlpTools\Tokenizers\PennTreeBankTokenizer;
-use NlpTools\Tokenizers\RegexTokenizer;
-use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 use NlpTools\Tokenizers\WhitespaceTokenizer;
 use NlpTools\Utils\Normalizers\English;
 use NlpTools\Utils\StopWords;
@@ -288,12 +283,12 @@ class Helper
 
         foreach($array as $key => $value){
             $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-            /* if($cat == "sport" ||$cat == "uk news"  ||$cat == "opinion" || $cat == "society"  ||$cat == "business"   ||
+             if($cat == "sport" ||$cat == "uk news"  ||$cat == "opinion" || $cat == "society"  ||$cat == "business"   ||
             $cat == "politics" || $cat == "world news" ||$cat == "life and style" ||$cat == "environment"  || $cat == "technology"
              || $cat == "television & radio"  ||  $cat == "culture" || $cat == "art and design"  ||$cat == "film"  || $cat == "books"
              || $cat == "us news"   ||$cat == "football"|| $cat == "fashion" ||   $cat == "travel" || $cat == "science"){  //20 categories
                    $newArray[$key] = $value;
-                }*/
+                }
         }
 
         return $newArray;
@@ -311,17 +306,17 @@ class Helper
 
     foreach($array as $key => $value){
         $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-         /*if($cat == "travel"  || $cat == "business"/*|| $cat == "fashion" || $cat == "technology"){
-          //test fashion whs technology $numb raus?   film und politics guuut 0.8
-                $newArray[$key] = $value;
-            }*/
-        /*
-               if(  $cat == "sport"  || $cat == "football"  || $cat == "fashion"  || $cat == "life and style"){
-                $newArray[$key] = $value;
-            }*/
+        /*   if($cat == "travel"  || $cat == "business"||$cat == "fashion" || $cat == "technology"){
+            //test fashion whs technology $numb raus?   film und politics guuut 0.8
+                  $newArray[$key] = $value;
+              }*/
 
-        /*    if($cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business" ||
-       *       $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+       if(   $cat == "world news"  || $cat == "politics"   ||  $cat == "sport"  || $cat == "football"){
+              $newArray[$key] = $value;
+          }
+
+        /*  if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"  ||
+              $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
               || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
           ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
        $newArray[$key] = $value;

@@ -30,4 +30,13 @@ namespace TextClassification\BsTextClassification\Domain\Repository;
 class CategoryFingerprintRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
 
+    /*public function findAllContaining($string) {
+        $query = $this->createQuery();
+
+        $query->matching(
+            $query->contains('category_name',$string)
+        );
+        return $query->execute();
+    }*/
+
 }
