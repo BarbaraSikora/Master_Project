@@ -311,12 +311,12 @@ class Helper
                   $newArray[$key] = $value;
               }*/
 
-       if(   $cat == "world news"  || $cat == "politics"   ||  $cat == "sport"  || $cat == "football"){
+   if(   $cat == "travel"  || $cat == "business"      /* ||  $cat == "sport"  || $cat == "football"*/){
               $newArray[$key] = $value;
           }
 
-        /*  if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"  ||
-              $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+     /*   if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"    ||
+              $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"/*
               || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
           ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
        $newArray[$key] = $value;
@@ -372,21 +372,21 @@ class Helper
     public function exportCategories($dataTerms){
         $partCategories=[];
         foreach($dataTerms as $key => $term){
-            $secndPart = strstr($term->getArticleID()->getCategory(), ' ');
+            $secndPart =  trim(strtolower(strstr($term->getArticleID()->getCategory(), ' ')));
             if(isset($partCategories[$secndPart])){
 
                 $partCategories[$secndPart][1]++;
-                $partCategories[$secndPart][3] = $partCategories[$secndPart][3].$key."|";
-                $partCategories[$secndPart][2] = $partCategories[$secndPart][2].$term->getArticleID()->getUid()."|" ;
+                //$partCategories[$secndPart][3] = $partCategories[$secndPart][3].$key."|";
+                //$partCategories[$secndPart][2] = $partCategories[$secndPart][2].$term->getArticleID()->getUid()."|" ;
             }else{
                 $partCategories[$secndPart][0] = $secndPart;
                 $partCategories[$secndPart][1] = 1;
-                $partCategories[$secndPart][2] =$term->getArticleID()->getUid()."|" ;
-                $partCategories[$secndPart][3] =$key."|" ;
+               // $partCategories[$secndPart][2] =$term->getArticleID()->getUid()."|" ;
+               // $partCategories[$secndPart][3] =$key."|" ;
             }
         }
 
-        $fp = fopen('partTestCategories_03.csv', 'w');
+        $fp = fopen('partTestCategories_04.csv', 'w');
 
         foreach ($partCategories as $fields) {
             print_r(fputcsv($fp, $fields));

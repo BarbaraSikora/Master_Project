@@ -82,14 +82,15 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
     {
         $terms = $this->englishTermsRepository->findAll();
         $terms = $this->help->filterTwentyCategories($terms);
+       // $this->help->exportCategories($terms);
         /* foreach($terms as $term){
             $article = $term;
            $this->help->writeFile($article);
-          /*tring = $term->getArticleID()->getContent();
+          /*$string = $term->getArticleID()->getContent();
            $newArray= $this->help->preprocessingData($string);
            $term->setTerms(implode(" ",$newArray));
-           $this->updateAction($term);
-        }*/
+           $this->updateAction($term);*/
+        //}
         //$terms = $this->englishTermsRepository->findAll();
         $this->view->assign('datas',count($terms));
     }
@@ -179,48 +180,40 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $fingerprinting = new SemanticFingerprinting();
 
           $contextMap = $this->categoryFingerprintRepository->findByUid(56);
-          $fingerprinting->startSemanticFingerprinting($dataTerms,$contextMap->getFingerprint(),false, 60);
-         // $fingerprinting->startSemanticFingerprinting($dataTerms,false,false, 60);
-          $testData = $fingerprinting->getTestData();
-
-
-        ####ZUM Testen des Thresholds bzw um Calculation zu vereinfachen, so dass die wort stacks gespeichert werden ############
-
-       /* $stacks['uk news'] = $this->categoryFingerprintRepository->findByUid(31)->getFingerprint();
-        $stacks['business'] = $this->categoryFingerprintRepository->findByUid(32)->getFingerprint();
-        $stacks['opinion'] = $this->categoryFingerprintRepository->findByUid(33)->getFingerprint();
-        $stacks['sport'] = $this->categoryFingerprintRepository->findByUid(34)->getFingerprint();
-        $stacks['society'] = $this->categoryFingerprintRepository->findByUid(35)->getFingerprint();*/
-
-        /*$stacks['politics'] = $this->categoryFingerprintRepository->findByUid(41)->getFingerprint();
-        $stacks['world news'] = $this->categoryFingerprintRepository->findByUid(43)->getFingerprint();
-        $stacks['life and style'] = $this->categoryFingerprintRepository->findByUid(45)->getFingerprint();
-        $stacks['environment'] = $this->categoryFingerprintRepository->findByUid(42)->getFingerprint();
-        $stacks['technology'] = $this->categoryFingerprintRepository->findByUid(44)->getFingerprint();*/
-
-        /*$stacks['television & radio'] = $this->categoryFingerprintRepository->findByUid(47)->getFingerprint();
-        $stacks['culture'] = $this->categoryFingerprintRepository->findByUid(46)->getFingerprint();
-        $stacks['art and design'] = $this->categoryFingerprintRepository->findByUid(50)->getFingerprint();
-        $stacks['film'] = $this->categoryFingerprintRepository->findByUid(49)->getFingerprint();
-        $stacks['books'] = $this->categoryFingerprintRepository->findByUid(48)->getFingerprint();*/
-
-       /* $stacks['us news'] = $this->categoryFingerprintRepository->findByUid(54)->getFingerprint();
-        $stacks['football'] = $this->categoryFingerprintRepository->findByUid(53)->getFingerprint();
-        $stacks['fashion'] = $this->categoryFingerprintRepository->findByUid(51)->getFingerprint();
-        $stacks['travel'] = $this->categoryFingerprintRepository->findByUid(52)->getFingerprint();
-        $stacks['science'] = $this->categoryFingerprintRepository->findByUid(55)->getFingerprint();*/
+           // $fingerprinting->startSemanticFingerprinting($dataTerms,$contextMap->getFingerprint(),false, 188);
+         // $fingerprinting->startSemanticFingerprinting($dataTerms,false,false, false);
 
 
 
-     /*   $map = $fingerprinting->getCategoryFingerprints();
+      /*  $stacks = [];
+        //finde die Wort - Stacks pro category auf der 20er ContextMap
+        for($i = 78; $i <88; $i++){
+            $stack = $this->categoryFingerprintRepository->findByUid($i);
+            $class = explode("_",$stack->getCategoryName())[0];
+            $stacks[$class] = $stack->getFingerprint();
+        }
+
+        $fingerprinting->startSemanticFingerprinting($dataTerms,$contextMap->getFingerprint(),$stacks, 188);
+        $testData = $fingerprinting->getTestData();
+*/
+
+
+
+
+
+       /* $map = $fingerprinting->getContextMap();
+        $map = implode(" ",$map);
+        $this->categoryFingerprintController->newAction('SecondTen',$map);
+
+        $map2 = $fingerprinting->getCategoryFingerprints();
         print_r("<pre>");
-        print_r($map);
+        print_r($map2);
         print_r("</pre>");
       //  $map = implode(" ",$map);
 
-        foreach($map as $class => $stacks){
+        foreach($map2 as $class => $stacks){
             $stack = implode(" ",$stacks);
-            $this->categoryFingerprintController->newAction($class.'_FourthFive',$stack);
+            $this->categoryFingerprintController->newAction($class.'_SecondTen',$stack);
         }*/
 
         /*print_r("<pre>");
@@ -233,11 +226,12 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
 
             $result = [];
-      /* $thres = 10;
-        for($i = 1; $i < 4; $i++){
+       $thres = 10;
+        print("<p>");
+        for($i =1; $i < 18; $i++){
          $thres=10*$i;
 
-         $fingerprinting->startSemanticFingerprinting($dataTerms,false,false, $thres);
+         $fingerprinting->startSemanticFingerprinting($dataTerms,$contextMap->getFingerprint(),false, $thres);
          $testData = $fingerprinting->getTestData();
 
 
@@ -247,12 +241,13 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
              print("<br>------------------<br>");
 
 
-         }*/
+        }
+        print("</p>");
 
         ##########################################################################################
-        $result = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
+       //$result = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
 
-        $percentage = $result['correct'];
+      // $percentage = $result['correct'];
         $result['countTestDocs']=count($testData);
         $result['accuracy']=($percentage/count($testData))*100;
         $this->view->assign('data',$result );

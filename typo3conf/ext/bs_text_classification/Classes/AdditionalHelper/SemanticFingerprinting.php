@@ -188,12 +188,15 @@ class SemanticFingerprinting
                 unset($this->contextMap[array_search($key, $this->contextMap)]);
             }*/
 
-            $this->contextMap = array_filter($this->contextMap);
+            $this->contextMap = array_filter($this->contextMap, function($value) { return $value !== ''; });
             $this->contextMap = array_values($this->contextMap);
+
         }
 
         #TODO
         $this->contextLabelMap = $this->createContextMap($labels);
+
+
 
 
 ###################VERÄNDERT######################
@@ -217,8 +220,8 @@ class SemanticFingerprinting
         print_r($this->data);
         print_r("</pre>");*/
 
-      /*  $sim = new CosineSimilarity();
-         $similarity = $sim->similarity($this->data['sport'],$this->data['football']);
+        /*$sim = new CosineSimilarity();
+         $similarity = $sim->similarity($this->data['film'],$this->data['politics']);
          print_r("<br>");
          print_r("SIMILARITY = ");
          print_r($similarity);
@@ -228,6 +231,7 @@ class SemanticFingerprinting
         //whole category for category fp
 
         if($wordStacks){
+            print_r("::::::hhhhola");
             foreach($wordStacks as $key => $stacks){
                 $this->categoryFingerprints[$key] = $stacks;
                 $this->createCategoryFingerprints($key,$stacks);
@@ -362,6 +366,11 @@ class SemanticFingerprinting
 
             // 0 -> max id aufsteigend sortiern
             ksort($this->categoryFingerprints[$class]);
+
+        //performance test
+        $this->categoryFingerprints[$class] = array_filter($this->categoryFingerprints[$class]); // removes 0s
+
+
 
 
     }
@@ -504,7 +513,10 @@ class SemanticFingerprinting
         arsort($presentClass);
 
         //return $threshold;
-       $fpPackage['fp'] = $this->getTextSDR($tmp,$threshold);
+        $fpPackage['fp'] = $this->getTextSDR($tmp,$threshold);
+
+        $fpPackage['fp'] = array_filter($fpPackage['fp']);  //performance test
+
       // $fpPackage['fp'] = $this->getWeightedTextSDR($tmp,$threshold,count($testTerms));
         $fpPackage['highestContext'] =  current(array_keys($presentClass)); //array_slice($tmp,0,5,true);
         return $fpPackage;
@@ -694,8 +706,5 @@ class SemanticFingerprinting
         fclose($fp);
 
     }
-
-
-
 
 }
