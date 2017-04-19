@@ -127,8 +127,15 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
     public function listAction()
     {
         $datas = $this->englishDataRepository->findAll();
-        //$datas = "test";
-        $this->view->assign('datas', $datas);
+        $filteredData =[];
+        foreach($datas as $key => $value){
+            $cat=$datas[$key]->getCategory();
+            if (strpos($cat, "Environment") !== false) {
+                $filteredData[$key] = $value;
+            }
+        }
+
+        $this->view->assign('datas', $filteredData);
     }
     /**
      * action new

@@ -65,6 +65,22 @@ class SemanticFingerprinting
         return $this->contextMap;
     }
 
+
+    public function resetValues(){
+     /*   $this->trainingsData = null;
+       $this->dataTerms = null;
+        $this->testData = null;
+        $this->contextMap = null;
+        $this->trainVector = null;
+        $this->simMatrix = null;
+        $this->contextLabelMap = null;
+       $this->data = null;*/
+        $this->categoryFingerprints = null;
+        //$this->threshold=35;
+
+    }
+
+
     public function simpleStart($data,$testTerms,$contextMap,$stacks){
 
         $labels = [];
@@ -98,22 +114,21 @@ class SemanticFingerprinting
               $this->prepareClassifier($cat,array_keys($this->trainVector[$key]));
           }
 
-        foreach($stacks as $key => $words){
+       /* foreach($stacks as $key => $words){
             $this->createCategoryFingerprints($key,$words);
+        }*/
+
+
+        if($stacks){
+            foreach($stacks as $key => $words){
+                $this->categoryFingerprints[$key] = $words;
+                $this->createCategoryFingerprints($key,$words);
+            }
+        }else{
+            foreach($this->data as $key => $words){
+                $this->createCategoryFingerprints($key,$words);
+            }
         }
-
-
-
-/*
-
-
-          foreach($this->data as $key => $words){
-              $this->createCategoryFingerprints($key,$words);
-          }*/
-
-
-
-
 
 
     }
@@ -153,7 +168,7 @@ class SemanticFingerprinting
 ###################VERÄNDERT######################
     // HIER FAIL WARUM??????? ööööööööööööööööööööööööööööööö ahahhhhh
         if($contextMap){
-            print_r("hhhhola");
+           // print_r("hhhhola");
             $this->getTermsPerDoc();
         }else{
             $this->tfidf(false);
@@ -181,12 +196,6 @@ class SemanticFingerprinting
                     unset($this->contextMap[$key]);
                 }
             }
-
-            ################### VERSUCH 2 dauert zu lange
-           /* //oooder alle anderen müssen data terms enthalten bleiben und nur test data ids weg
-            foreach($this->testData as $key => $object){
-                unset($this->contextMap[array_search($key, $this->contextMap)]);
-            }*/
 
             $this->contextMap = array_filter($this->contextMap, function($value) { return $value !== ''; });
             $this->contextMap = array_values($this->contextMap);
@@ -220,8 +229,8 @@ class SemanticFingerprinting
         print_r($this->data);
         print_r("</pre>");*/
 
-        /*$sim = new CosineSimilarity();
-         $similarity = $sim->similarity($this->data['film'],$this->data['politics']);
+       /* $sim = new CosineSimilarity();
+        $similarity = $sim->similarity($this->data['television & radio'],$this->data['culture']);
          print_r("<br>");
          print_r("SIMILARITY = ");
          print_r($similarity);
@@ -231,7 +240,7 @@ class SemanticFingerprinting
         //whole category for category fp
 
         if($wordStacks){
-            print_r("::::::hhhhola");
+           // print_r("::::::hhhhola");
             foreach($wordStacks as $key => $stacks){
                 $this->categoryFingerprints[$key] = $stacks;
                 $this->createCategoryFingerprints($key,$stacks);
@@ -378,7 +387,7 @@ class SemanticFingerprinting
     protected function getStackOfWordSDRs($word,$categoryFP,$numb){
         foreach($this->contextMap as $key => $index) {
             if(array_key_exists($word,$this->trainVector[$index])){
-                $categoryFP[$key] += 1*$numb; /* *numb */
+                $categoryFP[$key] +=  1*$numb; /* *$numb */
             }else{
                 $categoryFP[$key] += 0;
             }

@@ -1,6 +1,5 @@
 <f:layout name="Default" />
 
-
 <f:section name="main">
 
 	<f:link.action class="back" action="list" controller="EnglishTerms">Back to Overview</f:link.action>
@@ -22,16 +21,17 @@
 		</tr>
 
 		<f:for each="{datas}" as="data">
-			<tr>
-				<td>{data.uid}</td>
-				<td>{data.title}</td>
-				<td>{data.description}</td>
-				<td> {data.category}</td>
-				<td> {data.datePublished}</td>
-				<td>{data.content}</td>
-				<f:comment><td><f:link.action action="edit" arguments="{data : data}">Edit</f:link.action></td>
-					<td><f:link.action action="delete" arguments="{data : data}">Delete</f:link.action></td></f:comment>
-			</tr>
+
+					<tr>
+						<td>{data.uid}</td>
+						<td>{data.title}</td>
+						<td>{data.description}</td>
+						<td> {data.category}</td>
+						<td> {data.datePublished}</td>
+						<td>{data.content}</td>
+						<f:comment><td><f:link.action action="edit" arguments="{data : data}">Edit</f:link.action></td>
+							<td><f:link.action action="delete" arguments="{data : data}">Delete</f:link.action></td></f:comment>
+					</tr>
 		</f:for>
 	</table>
 	<f:comment>{datas}</f:comment>

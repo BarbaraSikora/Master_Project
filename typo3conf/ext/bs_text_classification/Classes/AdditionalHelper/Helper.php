@@ -311,16 +311,16 @@ class Helper
                   $newArray[$key] = $value;
               }*/
 
-   if(   $cat == "travel"  || $cat == "business"      /* ||  $cat == "sport"  || $cat == "football"*/){
+    /*if($cat == "television & radio"  || $cat == "culture"      /* ||  $cat == "sport"  || $cat == "football"){
               $newArray[$key] = $value;
           }
-
-     /*   if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"    ||
-              $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"/*
-              || $cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
-          ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
+        */
+      if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"    /* ||
+              $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+              ||$cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
+          ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"*/){  //20 categories
        $newArray[$key] = $value;
-    }*/
+    }
         }
 
 
