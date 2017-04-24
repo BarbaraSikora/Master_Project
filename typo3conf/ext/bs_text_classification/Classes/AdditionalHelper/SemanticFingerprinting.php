@@ -352,8 +352,8 @@ class SemanticFingerprinting
         }else{
             $stack[$class] = explode(" ",$words);
         }
-         /*
-        $this->categoryFingerprints[$class] = $categoryFP;*/
+
+        /*$this->categoryFingerprints[$class] = $categoryFP;*/
 
         ###################VERÄNDERT######################
 

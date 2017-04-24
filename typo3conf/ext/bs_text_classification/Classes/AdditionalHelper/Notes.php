@@ -70,6 +70,28 @@ for($i = 89; $i <99; $i++){
     $stacks[$class] = $stack->getFingerprint();
 }*/
 
+//third
+$contextMap = $this->categoryFingerprintRepository->findByUid(99);
+
+$stacks = [];
+//finde die Wort - Stacks pro category auf der 20er ContextMap
+for($i = 110; $i <120; $i++){
+    $stack = $this->categoryFingerprintRepository->findByUid($i);
+    $class = explode("_",$stack->getCategoryName())[0];
+    $stacks[$class] = $stack->getFingerprint();
+}
+
+//fourth
+$contextMap = $this->categoryFingerprintRepository->findByUid(120);
+
+$stacks = [];
+//finde die Wort - Stacks pro category auf der 20er ContextMap
+for($i = 121; $i <131; $i++){
+    $stack = $this->categoryFingerprintRepository->findByUid($i);
+    $class = explode("_",$stack->getCategoryName())[0];
+    $stacks[$class] = $stack->getFingerprint();
+}
+
 
 // Context map for 2er map
 

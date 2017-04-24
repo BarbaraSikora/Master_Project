@@ -311,16 +311,25 @@ class Helper
                   $newArray[$key] = $value;
               }*/
 
-    /*if($cat == "television & radio"  || $cat == "culture"      /* ||  $cat == "sport"  || $cat == "football"){
+        /*     if($cat == "film"  || $cat == "politics"   ||  $cat == "sport"  || $cat == "football"){
               $newArray[$key] = $value;
-          }
-        */
-      if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"    /* ||
-              $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
-              ||$cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
-          ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"*/){  //20 categories
+          }*/
+
+        /*   if(   $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"  ||
+                  $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+                  ||$cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
+             || $cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
        $newArray[$key] = $value;
-    }
+    }*/
+
+        if(  $cat == "us news" || $cat == "technology"  || $cat == "science"  || $cat == "sport"  || $cat == "opinion"  ||
+                 $cat == "world news" || $cat == "football"  || $cat == "politics"  || $cat == "fashion" || $cat == "television & radio"/*
+                 ||$cat == "culture"  || $cat == "environment" || $cat == "art and design"  || $cat == "life and style"  || $cat == "travel"
+            || $cat == "books"  || $cat == "uk news" || $cat == "business"  || $cat == "film"  || $cat == "society"*/){  //20 categories
+            $newArray[$key] = $value;
+        }
+
+
         }
 
 
