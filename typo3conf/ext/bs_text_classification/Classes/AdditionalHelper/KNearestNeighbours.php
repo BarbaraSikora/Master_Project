@@ -91,16 +91,26 @@ class KNearestNeighbours
     }
 
     function cosineSim($testTerms,$sim){
+    $distances = [];
+    /* print_r("<pre>");
+     print_r($this->testData[$testID]);
+     print_r("</pre>");*/
+    foreach($this->trainingsData as $key => $value){
+        //$distances[$key] = $sim->similarity($this->trainingsData[$testID],$this->trainingsData[$key]);
+        $distances[$key] = $sim->similarity($testTerms,$this->trainingsData[$key]);
+    }
+    return $distances;
+}
+    function euclidSim($testTerms,$sim){
         $distances = [];
-       /* print_r("<pre>");
-        print_r($this->testData[$testID]);
-        print_r("</pre>");*/
-     foreach($this->trainingsData as $key => $value){
-            //$distances[$key] = $sim->similarity($this->trainingsData[$testID],$this->trainingsData[$key]);
-            $distances[$key] = $sim->similarity($testTerms,$this->trainingsData[$key]);
-      }
+        foreach($this->trainingsData as $key => $value){
+            $distances[$key] = $sim->dist($testTerms,$this->trainingsData[$key]);
+        }
         return $distances;
     }
+
+
+
 
     protected function prepareData($content){
         $help = new Helper();
@@ -125,6 +135,8 @@ class KNearestNeighbours
         foreach($termObjects as $document){
             $content = $document->getTerms();
             $array = $this->prepareData($content);
+
+            //check if empty places in array because of unset
 
             $trainSet->addDocument(
                 "",

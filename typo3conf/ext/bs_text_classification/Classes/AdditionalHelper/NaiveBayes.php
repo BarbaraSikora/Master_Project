@@ -71,6 +71,22 @@ class NaiveBayes
        foreach($this->trainingsData as $key => $doc){
             $this->trainClassifier($this->trainingsData[$key][0],$this->trainingsData[$key][1]);
         }
+        //$this->checkTestData();
+    }
+
+    protected function checkTestData(){
+        $numbClass =[];
+        foreach($this->testData as $key => $doc){
+            $class = trim(strtolower(strstr($this->testData[$key][0], ' ')));
+            if (!isset($numbClass[$class])) {
+                $numbClass[$class] = 0;
+            }
+
+            $numbClass[$class]++;
+        }
+        print("<pre>");
+        print_r($numbClass);
+        print("</pre>");
 
     }
 
@@ -88,6 +104,7 @@ class NaiveBayes
             //reduces extra stop words
             $array = $help->stopWordsReduction($array);
             $array = $help->stemTerms($array);
+           // $array = array_unique($array);
             foreach($array as $k => $v){
                 if(strlen($v) <3 || strlen($v) > 20 ){
                     unset($array[$k]);
@@ -126,9 +143,9 @@ class NaiveBayes
                 $this->classes[$class]++;
                $this->terms[$term]++;
                $this->data[$class][$term]++;
-           }
+        }
            $this->documents[$class]++;
-       }
+    }
 
 
        public function classifyDocument($testDocument)
@@ -146,6 +163,7 @@ class NaiveBayes
             if ($inversedDocCount === 0) {
                 continue;
             }
+
 
             foreach ($testDocument as $term) {
                   //how often appears this word in all documents in allen classen
@@ -165,9 +183,9 @@ class NaiveBayes
 
                       $inversedTokenCount = $totalTokenCount - $tokenCount;
                      $wordProbability = $tokenCount / $classCount;
-                      // $wordProbability = $tokenCount / $docCount;
+                     //  $wordProbability = $tokenCount / $docCount;
                     $inversedWordProbability = $inversedTokenCount / (array_sum($this->classes)-$classCount);
-                      // $inversedWordProbability = $inversedTokenCount / $inversedDocCount;
+                     //  $inversedWordProbability = $inversedTokenCount / $inversedDocCount;
                       $probability = $wordProbability / ($wordProbability + $inversedWordProbability);
                       // wahrscheinlichkeit dass das wort in dieser klasse ist (mal der whs der klasse) dividiert durch
                       //die whs dass das wort überhaupt in irgendeiner klasse vorkommt
@@ -181,21 +199,26 @@ class NaiveBayes
                 }
 
                 //aufsummiern der wahrscheinlichkeiten
-                $log += (log(1 - $probability) - log($probability));
-               //$log +=  log($probability);
+                $log += (log($probability) - log(1 - $probability));
+                //$log += (log($probability/$inversedWordProbability));
+
+            //  $log +=  log($probability);
 
             }
 
-            //invert log to get the probility back in in the 0 to 1 range
-            $scores[$class] = 1 / (1 + exp($log));
-          //$scores[$class] = exp($log);
+            $log+=log(($docCount/$totalDocCount)/($inversedDocCount/$totalDocCount)); // ???????
 
-          /*  print($class);
-            print("<br>");
-            print_r($log);
-            print("<br>");
-            print_r($scores[$class]);
-            print("<br>");*/
+            //invert log to get the probility back in in the 0 to 1 range
+           //$scores[$class] = 1 / (1 + exp($log));
+          $scores[$class] = exp($log);
+
+              print($class);
+                print("<br>");
+                print_r($log);
+                print("<br>")  ;
+                  print_r($scores[$class]);
+                print("<br>");
+                  print("<br>");
         }
         arsort($scores, SORT_NUMERIC);
        return $scores;

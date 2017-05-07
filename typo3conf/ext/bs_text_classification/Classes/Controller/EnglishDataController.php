@@ -97,6 +97,7 @@ class EnglishDataController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
                        $date = $dataDate[0]->nodeValue;
                        $date = str_replace('T', ' ', $date);
                        $date = str_replace('+0000', '', $date);
+
                        // preprocess Data tags weg, stopwords weg leezeichen weg, stemming
                        $dataContent = strip_tags($dataContent);
                        $dataContentTerms = $this->help->preprocessingData($dataContent);

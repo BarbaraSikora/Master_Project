@@ -157,18 +157,18 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         $naive = new NaiveBayes();
         $naive->startNaiveBayes($dataTerms);
         $testData = $naive->getTestData();
-        print_r("<pre>");
-        print_r(count($dataTerms));
-        print("<br>");
-        print_r(count($testData));
-        print_r("</pre>");
-        /* $cat=strtolower($testData[609][0]);
-         $probabilities =$naive->guess($testData[609][1]);
-          print("<pre>");
-          print_r($probabilities);
-          print("</pre>");
-          print_r($cat);
-          print("<br>");*/
+          print_r("<pre>");
+         print_r(count($dataTerms));
+         print("<br>");
+         print_r(count($testData));
+         print_r("</pre>");
+      /* $cat=strtolower($testData[609][0]);
+          $probabilities =$naive->guess($testData[609][1]);
+           print("<pre>");
+           print_r($probabilities);
+           print("</pre>");
+           print_r($cat);
+           print("<br>");*/
         $result = $this->testNaiveBayes($testData,$dataTerms,$naive);
         $percentage = $result['correct'];
         $result['countTestDocs']=count($testData);
@@ -193,36 +193,36 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
           //$fingerprinting->startSemanticFingerprinting($dataTerms,false,false, 10);
           //$testData = $fingerprinting->getTestData();
 
-        $contextMap = $this->categoryFingerprintRepository->findByUid(99);
-
+// fourth
+      /*  $contextMap = $this->categoryFingerprintRepository->findByUid(25);
         $stacks = [];
         //finde die Wort - Stacks pro category auf der 20er ContextMap
-        for($i = 110; $i <120; $i++){
+        for($i = 51; $i <56; $i++){
             $stack = $this->categoryFingerprintRepository->findByUid($i);
             $class = explode("_",$stack->getCategoryName())[0];
             $stacks[$class] = $stack->getFingerprint();
-        }
+        }*/
+
+      //   $fingerprinting->startSemanticFingerprinting($dataTerms,false,false, 400,false);
+          //  $fingerprinting->startSemanticFingerprinting($dataTerms,$contextMap->getFingerprint(),$stacks, 400,false);
+           //  $testData = $fingerprinting->getTestData();
 
 
-        /*      //$fingerprinting->startSemanticFingerprinting($dataTerms,false,false, false);
-              $fingerprinting->startSemanticFingerprinting($dataTerms,$contextMap->getFingerprint(),$stacks, 468);
-               $testData = $fingerprinting->gettData();
-       /*
 
-              print_r("<pre>");
-              print_r(count($dataTerms));
-              print("<br>");
-              print_r(count($testData));
-              print_r("</pre>");*/
+           /*  print_r("<pre>");
+             print_r(count($dataTerms));
+             print("<br>");
+             print_r(count($testData));
+             print_r("</pre>");*/
+
 
 /*
-
         $map = $fingerprinting->getContextMap();
         print_r("<pre>");
         print_r($map);
         print_r("</pre>");
         $map = implode(" ",$map);
-        $this->categoryFingerprintController->newAction('FourthTen',$map);
+        $this->categoryFingerprintController->newAction('EighthFive',$map);
 
         $map2 = $fingerprinting->getCategoryFingerprints();
         print_r("<pre>");
@@ -232,7 +232,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
         foreach($map2 as $class => $stacks){
             $stack = implode(" ",$stacks);
-            $this->categoryFingerprintController->newAction($class.'_FourthTen',$stack);
+            $this->categoryFingerprintController->newAction($class.'_EighthFive',$stack);
         }*/
 
         /*print_r("<pre>");
@@ -243,21 +243,22 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         print_r(count($testData));
         print_r("</pre>");*/
 
-       $result = [];
+      $result = [];
         $thres = 10;
         print("<p>");
-        for($i = 7; $i < 10; $i++){
+        for($i = 1; $i < 18; $i++){
          //$thres=90*$i;
-            $thres=90*$i+67;
-         $fingerprinting->startSemanticFingerprinting($dataTerms,$contextMap->getFingerprint(),$stacks, $thres);
-         $testData = $fingerprinting->getTestData();
+
+             $thres=10*$i+0;
+             $fingerprinting->startSemanticFingerprinting($dataTerms,false,false, $thres,false);
+             $testData = $fingerprinting->getTestData();
 
              $result = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
              print("<br>------ACCUR------------<br>");
              print_r(($result['correct']/count($testData))*100);
              print("<br>------------------<br>");
 
-       $fingerprinting->resetValues();
+            $fingerprinting->resetValues();
             //$thres=50+20*$i;
             //$thres+=10;
        }
@@ -266,7 +267,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
         ##########################################################################################
        // $result = $this->testSemanticFingerprinting($testData,$dataTerms,$fingerprinting);
 
-       // $percentage = $result['correct'];
+       //$percentage = $result['correct'];
         $result['countTestDocs']=count($testData);
         $result['accuracy']=($percentage/count($testData))*100;
         $this->view->assign('data',$result );
@@ -455,7 +456,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
                     $errors[$predictedCat.'---'.$cat] = 0;
                 }
                 $errors[$predictedCat.'---'.$cat]++;
-                print_r("<br>");
+               /* print_r("<br>");
                 print_r($key);
                 print_r("<br>");
                 print_r($id);
@@ -466,7 +467,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
                 print_r($predictedCat);
                 print("----");
                 print_r($cat);
-                print("<br>");
+                print("<br>");*/
             }
         }
         arsort($errors);
@@ -507,7 +508,7 @@ class EnglishTermsController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
             $dist = array_slice($topK,0,$k);
             //summing up similarities for different classes
             foreach($dist as $i => $v){
-                $rank = $i+1;
+               // $rank = $i+1;
                 $weighting[$categories[$i]] = $weighting[$categories[$i]]+($dist[$i]);
                 if(!isset($categoryNames[$categories[$i]])){
                     $categoryNames[$categories[$i]] = 0;

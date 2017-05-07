@@ -29,6 +29,7 @@ class SemanticFingerprinting
     protected $contextLabelMap = null;
     protected $data = null;
     protected $categoryFingerprints = null;
+    protected $customThreshold=35;
     protected $threshold=35;
 
 
@@ -134,7 +135,7 @@ class SemanticFingerprinting
     }
 
     ###################VERÄNDERT######################
-    public function startSemanticFingerprinting($data,$contextMap,$wordStacks,$factor){
+    public function startSemanticFingerprinting($data,$contextMap,$wordStacks,$factor,$customThres){
         $labels = null;
         $this->dataTerms = $data;
         $count = count($data);
@@ -149,24 +150,33 @@ class SemanticFingerprinting
             $this->threshold = floor($trainingNumb*0.5);
         }
 
+        if($customThres){
+            $this->customThreshold = $customThres;
+        }else{
+            $this->customThreshold = $this->threshold;
+        }
+
         ###################VERÄNDERT######################
 
         print_r("<pre>");
-        print_r('<br>------THRES-------------<br>');
+        print_r('<br>------THRES: ');
         print_r($this->threshold);
-        print_r('<br>-------------------<br>');
+        print_r('<br>CUSTOM-THRES: ');
+        print_r($this->customThreshold);
+        print_r('<br>');
         print_r("</pre>");
 
         $help->shuffle_assoc($this->dataTerms);
 
         $this->trainingsData = array_slice($this->dataTerms, 0,$trainingNumb,true);
+       // $this->trainingsData = array_slice($this->dataTerms, 0,$count,true);
         $this->testData = array_slice($this->dataTerms, $trainingNumb,$testingNumb,true);
 
         //innerhalb von texten unique wörter, aber innerhalb einer klasse nicht
         //jedes doc mit key und allen wörter + weights
 
 ###################VERÄNDERT######################
-    // HIER FAIL WARUM??????? ööööööööööööööööööööööööööööööö ahahhhhh
+
         if($contextMap){
            // print_r("hhhhola");
             $this->getTermsPerDoc();
@@ -210,11 +220,11 @@ class SemanticFingerprinting
 
 ###################VERÄNDERT######################
 
-        /*print_r("<pre>");
+       /* print_r("<pre>");
         print_r('<br>-------------------<br>');
-       print_r(count($this->contextLabelMap));
+       print_r($this->contextLabelMap);
         print_r('<br>-------------------<br>');
-        print_r(count($this->contextMap));
+        //print_r(count($this->contextMap));
         print_r("</pre>");*/
 
         //get all words of each train class and count
@@ -225,16 +235,26 @@ class SemanticFingerprinting
              $this->prepareClassifier($cat,array_keys($this->trainVector[$key]));
          }
 
-        /*print_r("<pre>");
-        print_r($this->data);
-        print_r("</pre>");*/
 
-       /* $sim = new CosineSimilarity();
-        $similarity = $sim->similarity($this->data['television & radio'],$this->data['culture']);
-         print_r("<br>");
+
+
+      /*   $sim = new CosineSimilarity();
+          //  $similarity = $sim->similarity($this->data['fashion'],$this->data['football']);
+        $simArray = [];
+            $array = array_values($this->data);
+            for($i = 0; $i < 4; $i++){
+              for($j = 1; $j < 4; $j++) {
+                  if(!isset($simArray[$i . "-" . $j])&&!isset($simArray[$j . "-" . $i]) && $i != $j){
+                      $simArray[$i . "-" . $j] = $sim->similarity($array[$i], $array[$j]);
+                  }
+              }
+            }
+
+         print_r("<pre>");
+        print_r(array_keys($this->data));
          print_r("SIMILARITY = ");
-         print_r($similarity);
-         print_r("<br>");*/
+         print_r($simArray);
+         print_r("</pre>");*/
 
         ###################VERÄNDERT######################
         //whole category for category fp
@@ -251,6 +271,7 @@ class SemanticFingerprinting
             }
         }
 
+        //$this->checkTestData();
 
       //whole category for category fp
 
@@ -353,20 +374,19 @@ class SemanticFingerprinting
             $stack[$class] = explode(" ",$words);
         }
 
-        /*$this->categoryFingerprints[$class] = $categoryFP;*/
+       // $this->categoryFingerprints[$class] = $categoryFP;
 
         ###################VERÄNDERT######################
 
-
-        /* print_r("<pre>");
-     print_r($categoryFP);
-     print_r("</pre>");*/
-
-
-           arsort($stack[$class]);
+          arsort($stack[$class]);
 
             //höchste stacksrausschneiden
            $threshold = array_slice($stack[$class],0,$this->threshold,true);
+
+            /*print_r("<pre>");
+            print_r("<b>CategoryFP:</b>".$class." <br>");
+            print_r($threshold);
+            print_r("</pre>");*/
 
             //zurücksetzen auf 0n und 1en
             $this->categoryFingerprints[$class] = $this->getTextSDR($stack[$class],$threshold);
@@ -378,8 +398,6 @@ class SemanticFingerprinting
 
         //performance test
         $this->categoryFingerprints[$class] = array_filter($this->categoryFingerprints[$class]); // removes 0s
-
-
 
 
     }
@@ -507,7 +525,13 @@ class SemanticFingerprinting
         $tmp = $testFP;
         arsort($tmp);
 
-        $threshold = array_slice($tmp,0,$this->threshold,true);
+        $threshold = array_slice($tmp,0,$this->customThreshold,true); //test data
+
+       /* print_r("<pre>");
+        print_r("<b>TestFP:</b> <br>");
+        print_r($threshold);
+        print_r("</pre>");*/
+
 
         //get durchschnitts classe in threshold
        $presentClass = [];
@@ -576,11 +600,74 @@ class SemanticFingerprinting
     }
 
     function getTermsPerDoc(){
+        $words=[];
         foreach($this->trainingsData as $key => $document) {
             $content = $document->getTerms();
+            $cat = trim(strtolower(strstr($document->getArticleID()->getCategory(), ' ')));
             $array = $this->prepareData($content);
+
+          //  $words[$cat][]=count($array);
             $this->trainVector[$key] = array_fill_keys($array,$key);
+
+         /*   foreach ($array as $term => $iwas) {
+                if (!isset($words[$iwas])) {
+                    $words[$iwas] = 0;
+                }
+                $words[$iwas]++;
+            }*/
+
+
         }
+
+        /*print_r("<pre>");
+        print_r(count($words));
+        print_r("</pre>");*/
+
+     /*   $s=0;
+        $sm = 0;
+        $m= 0;
+        $ml=0;
+        $l =0;
+        $xl =0;
+
+        foreach($words as $class => $docs) {
+           // asort($words[$class]);
+            foreach($docs as $i => $charNumb) {
+                if ($charNumb < 100) {
+                    $s++;
+                } else if ($charNumb >= 100 && $charNumb < 300) {
+                    $sm++;
+                } else if ($charNumb >= 300 && $charNumb < 500) {
+                    $m++;
+                } else if ($charNumb >= 500 && $charNumb < 800) {
+                    $ml++;
+                } else if ($charNumb >= 800 && $charNumb < 1000) {
+                    $l++;
+                } else if ($charNumb >= 1000) {
+                    $xl++;
+                }
+
+            }
+
+            print_r("<pre>");
+            print_r("<b>".$class."</b><br>");
+            print_r($s."<br>");
+            print_r($sm."<br>");
+            print_r($m."<br>");
+            print_r($ml."<br>");
+            print_r($l."<br>");
+            print_r($xl."<br>");
+            print_r("</pre>");
+
+            $s=0;
+            $sm = 0;
+            $m= 0;
+            $ml=0;
+            $l =0;
+            $xl =0;
+        }*/
+
+
     }
 
 
@@ -713,6 +800,74 @@ class SemanticFingerprinting
         }
 
         fclose($fp);
+
+    }
+
+    protected function checkTestData(){
+        $numbClass =[];
+        $words = [];
+        foreach($this->testData as $key => $doc){
+            $class= trim(strtolower(strstr($this->testData[$key]->getArticleID()->getCategory(), ' ')));
+            $terms = $testTerms = $this->prepareData($this->testData[$key]->getTerms());
+            $terms = array_unique($terms);
+            $words[$class][]=count($terms);
+            /*if (!isset($numbClass[$class])) {
+                $numbClass[$class] = 0;
+            }
+
+            $numbClass[$class]++;*/
+        }
+        /*print("<pre>");
+        print_r($numbClass);
+        print("</pre>");*/
+
+        print("<pre>");
+        print_r($words);
+        print("</pre>");
+
+        $s=0;
+        $sm = 0;
+        $m= 0;
+        $ml=0;
+        $l =0;
+        $xl =0;
+
+        foreach($words as $class => $docs) {
+            // asort($words[$class]);
+            foreach($docs as $i => $charNumb) {
+                if ($charNumb < 100) {
+                    $s++;
+                } else if ($charNumb >= 100 && $charNumb < 300) {
+                    $sm++;
+                } else if ($charNumb >= 300 && $charNumb < 500) {
+                    $m++;
+                } else if ($charNumb >= 500 && $charNumb < 800) {
+                    $ml++;
+                } else if ($charNumb >= 800 && $charNumb < 1000) {
+                    $l++;
+                } else if ($charNumb >= 1000) {
+                    $xl++;
+                }
+
+            }
+
+            print_r("<pre>");
+            print_r("<b>".$class."</b><br>");
+            print_r($s."<br>");
+            print_r($sm."<br>");
+            print_r($m."<br>");
+            print_r($ml."<br>");
+            print_r($l."<br>");
+            print_r($xl."<br>");
+            print_r("</pre>");
+
+            $s=0;
+            $sm = 0;
+            $m= 0;
+            $ml=0;
+            $l =0;
+            $xl =0;
+        }
 
     }
 
