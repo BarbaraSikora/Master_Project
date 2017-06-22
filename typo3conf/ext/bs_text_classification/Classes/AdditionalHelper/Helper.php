@@ -197,7 +197,6 @@ class Helper
     public function checkURL($url){
 
         if(strpos($url, 'https://www.theguardian.com/') !== false){
-            // warum /science/ ???????
             if(strpos($url, 'video') !== false || strpos($url, 'audio') !== false || strpos($url, 'picture') !== false || strpos($url, 'live') !== false || strpos($url, 'gallery') !== false) {
                 return false;
             }else{
@@ -269,10 +268,62 @@ class Helper
     }
 
 
+
     //FILTER DATA
 
-
     /**
+     * action filter only 20 big categories
+     *
+     * @return array
+     */
+    public function filterVariableCategories($array,$option)
+    {
+        $newArray = [];
+
+        foreach ($array as $key => $value) {
+            $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
+            switch ($option) {
+                case 0:
+                    if ($cat == "sport" || $cat == "uk news" || $cat == "opinion" || $cat == "society" || $cat == "business") {
+                        $newArray[$key] = $value;
+                    }
+                    break;
+                case 1:
+                    if ($cat == "politics" || $cat == "world news" || $cat == "life and style" || $cat == "environment" || $cat == "technology") {
+                        $newArray[$key] = $value;
+                    }
+                    break;
+                case 2:
+                    if ($cat == "television & radio" || $cat == "culture" || $cat == "art and design" || $cat == "film" || $cat == "books") {
+                        $newArray[$key] = $value;
+                    }
+                    break;
+                case 3:
+                    if ($cat == "us news" || $cat == "football" || $cat == "fashion" || $cat == "travel" || $cat == "science") {
+                        $newArray[$key] = $value;
+                    }
+                    break;
+                case 4:
+                    if ($cat == "sport" || $cat == "uk news" || $cat == "opinion" || $cat == "society" || $cat == "business" ||
+                        $cat == "politics" || $cat == "world news" || $cat == "life and style" || $cat == "environment" || $cat == "technology"
+                    ) {
+                        $newArray[$key] = $value;
+                    }
+                    break;
+                case 5:
+                    if ($cat == "television & radio" || $cat == "culture" || $cat == "art and design" || $cat == "film" || $cat == "books"
+                        || $cat == "us news" || $cat == "football" || $cat == "fashion" || $cat == "travel" || $cat == "science"
+                    ) {
+                        $newArray[$key] = $value;
+                    }
+            }
+        }
+
+        return $newArray;
+
+    }
+
+        /**
      * action filter only 20 big categories
      *
      * @return array
@@ -294,6 +345,29 @@ class Helper
         return $newArray;
     }
 
+    /**
+     * action filter only 20 big categories
+     *
+     * @return array
+     */
+    public function filterRoughCategories($array){
+
+        $newArray = [];
+
+        foreach($array as $key => $value){
+            $cat =   explode(" ",$value->getArticleID()->getCategory())[0];
+          if($cat == "football" ||$cat == "world"    ||$cat == "sport"    || $cat == "uk-news"  ||$cat == "fashion"){  //5 categories
+                   $newArray[$key] = $value;
+               }
+
+            /*if($cat == "uk-news" ||$cat == "world"  ||$cat == "sport" || $cat == "football"  ||$cat == "opinion"   ||
+                $cat == "culture" || $cat == "fashion" ||$cat == "business" ||$cat == "lifeandstyle"  || $cat == "environment"
+                || $cat == "technology"  ||  $cat == "travel"){  //12 categories
+                $newArray[$key] = $value;
+            }*/
+        }
+        return $newArray;
+    }
 
     /**
      * action filter only big categories
@@ -306,29 +380,29 @@ class Helper
 
     foreach($array as $key => $value){
         $cat = trim(strtolower(strstr($value->getArticleID()->getCategory(), ' ')));
-        /*   if($cat == "travel"  || $cat == "business"||$cat == "fashion" || $cat == "technology"){
+        if($cat == "world news"  || $cat == "football"/* ||$cat == "fashion" || $cat == "technology"*/){
             //test fashion whs technology $numb raus?   film und politics guuut 0.8
                   $newArray[$key] = $value;
-              }*/
+              }
 
-             if(/*$cat == "world news"||   $cat == "football"  || */  $cat == "culture"   || $cat == "art and design"){
-              $newArray[$key] = $value;
-          }
+        /*    if($cat == "sport"||   $cat == "football" ||  $cat == "culture"   || $cat == "art and design"){
+           $newArray[$key] = $value;
+       }*/
 
-        /*  if( $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"   ||
-                   $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
+        /*if(  $cat == "sport" || $cat == "uk news"  || $cat == "opinion"  || $cat == "society"  || $cat == "business"    ||
+                     $cat == "politics" || $cat == "world news"  || $cat == "life and style"  || $cat == "environment" || $cat == "technology"
                    ||$cat == "television & radio"  || $cat == "culture" || $cat == "art and design"  || $cat == "film"  || $cat == "books"
-              || $cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"){  //20 categories
-      $newArray[$key] = $value;
-   }*/
+                ||$cat == "us news"  || $cat == "football" || $cat == "fashion"  || $cat == "travel"  || $cat == "science"/*){  //20 categories
+        $newArray[$key] = $value;
+     }*/
 
-        /*      if( $cat == "us news" || $cat == "technology"  || $cat == "science"  || $cat == "sport"  || $cat == "opinion"  ||
+        /*    if( $cat == "us news" || $cat == "technology"  || $cat == "science"  || $cat == "sport"  || $cat == "opinion"    ||
                       $cat == "world news" || $cat == "football"  || $cat == "politics"  || $cat == "fashion" || $cat == "television & radio"
-                      ||$cat == "culture"  || $cat == "environment" || $cat == "art and design"  || $cat == "life and style"  || $cat == "travel"
+                      ||$cat == "culture"  || $cat == "environment" || $cat == "art and design"  || $cat == "life and style"  || $cat == "travel"/*
                  || $cat == "books"  || $cat == "uk news" || $cat == "business"  || $cat == "film"  || $cat == "society"){  //20 categories
        $newArray[$key] = $value;
-   }*/
-
+   }
+        */
 
         }
 

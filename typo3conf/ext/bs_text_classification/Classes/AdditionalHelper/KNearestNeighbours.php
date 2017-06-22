@@ -53,6 +53,16 @@ class KNearestNeighbours
         return $this->trainingsData;
     }
 
+    public function resetValues(){
+         $this->dataTerms = null;
+        $this->trainingsData = null;
+        $this->testData = null;
+        $this->dataVectors = null;
+        $this->training = null;
+        $this->testing = null;
+
+    }
+
 
     /**
      * @return null
@@ -76,7 +86,7 @@ class KNearestNeighbours
         $this->dataTerms = $data;
         $count = count($data);
         $help = new Helper();
-        $this->training = ceil($count*0.80);
+        $this->training = ceil($count*0.80);// HERE!!!
         $this->testing = floor($count*0.20);
 
          $this->tfidf($this->dataTerms,false);
@@ -101,6 +111,8 @@ class KNearestNeighbours
     }
     return $distances;
 }
+
+
     function euclidSim($testTerms,$sim){
         $distances = [];
         foreach($this->trainingsData as $key => $value){
@@ -118,7 +130,7 @@ class KNearestNeighbours
         $content = preg_replace('/[0-9]+/', '', $content);
         //stemming
         $array =  explode(" ",$content);
-        $array = $help->stopWordsReduction($array);
+        $array = $help->stopWordsReduction($array); // HERE!!!
         $array = $help->stemTerms($array);
         foreach($array as $k => $v){
             if(strlen($v) <3 || strlen($v) > 20 ){

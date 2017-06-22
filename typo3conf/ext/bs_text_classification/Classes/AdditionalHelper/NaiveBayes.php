@@ -84,10 +84,6 @@ class NaiveBayes
 
             $numbClass[$class]++;
         }
-        print("<pre>");
-        print_r($numbClass);
-        print("</pre>");
-
     }
 
     protected function prepareData($data)
@@ -120,8 +116,8 @@ class NaiveBayes
     }
 
     protected function trainClassifier($class, $termArray){
-       // $cat = explode(" ",$class);
         $cat=trim(strtolower(strstr($class, ' ')));
+       // $cat =   explode(" ",$class)[0];
         $class = $cat;
 
         if (!isset($this->classes[$class])) {
@@ -182,10 +178,10 @@ class NaiveBayes
                     }
 
                       $inversedTokenCount = $totalTokenCount - $tokenCount;
-                     $wordProbability = $tokenCount / $classCount;
-                     //  $wordProbability = $tokenCount / $docCount;
-                    $inversedWordProbability = $inversedTokenCount / (array_sum($this->classes)-$classCount);
-                     //  $inversedWordProbability = $inversedTokenCount / $inversedDocCount;
+                    // $wordProbability = $tokenCount / $classCount;
+                       $wordProbability = $tokenCount / $docCount;
+                   // $inversedWordProbability = $inversedTokenCount / (array_sum($this->classes)-$classCount);
+                       $inversedWordProbability = $inversedTokenCount / $inversedDocCount;
                       $probability = $wordProbability / ($wordProbability + $inversedWordProbability);
                       // wahrscheinlichkeit dass das wort in dieser klasse ist (mal der whs der klasse) dividiert durch
                       //die whs dass das wort überhaupt in irgendeiner klasse vorkommt
@@ -200,6 +196,7 @@ class NaiveBayes
 
                 //aufsummiern der wahrscheinlichkeiten
                 $log += (log($probability) - log(1 - $probability));
+               // $log += (log(1 - $probability) - log($probability));  olf
                 //$log += (log($probability/$inversedWordProbability));
 
             //  $log +=  log($probability);
@@ -211,14 +208,6 @@ class NaiveBayes
             //invert log to get the probility back in in the 0 to 1 range
            //$scores[$class] = 1 / (1 + exp($log));
           $scores[$class] = exp($log);
-
-              print($class);
-                print("<br>");
-                print_r($log);
-                print("<br>")  ;
-                  print_r($scores[$class]);
-                print("<br>");
-                  print("<br>");
         }
         arsort($scores, SORT_NUMERIC);
        return $scores;

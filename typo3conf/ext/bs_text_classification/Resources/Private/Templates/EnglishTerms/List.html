@@ -5,16 +5,17 @@
 <f:section name="main">
 	<h2>Overview</h2>
 
-	<p>The classification is based on {datas} different articles.</p>
+	<p>The algorithms were trained on {datas.number} different articles.</p>
 	<f:flashMessages />
 
 	<div>
 		<p>
 			<f:form action="url">
+				<p>Choose a data corpus: <br><f:form.select class="textfield" property="corpus" name="corpus" options="{datas.options}" /></p>
 				<f:form.textfield  class="textfield" name="url" placeholder="Enter URL" property="url" required="TRUE" />
 				<f:form.submit class="link" value="Categorize my link"/>
 			</f:form>
-			<f:comment>https://www.theguardian.com/business/2017/apr/01/british-rail-franchises-foreign-owners-subsidy</f:comment>
+			<f:comment>Test URL: https://www.theguardian.com/business/2017/apr/01/british-rail-franchises-foreign-owners-subsidy</f:comment>
 		</p>
 	</div>
 
@@ -23,13 +24,13 @@
 		<p><f:link.action action="list" controller="EnglishData">Show Raw Articles</f:link.action></p>
 		<p><f:link.action action="show">Show Terms-List</f:link.action></p>
 	</div>
-	<h4>Test the different Algorithms</h4>
+	<h4>Test Environment - Test the different Algorithms*</h4>
 	<div class="indent">
 		<p><f:link.action action="knn">Test KNN</f:link.action></p>
 		<p><f:link.action action="bayes">Test Naive Bayes</f:link.action></p>
 		<p><f:link.action action="fingerprinting">Test Semantic Fingerprinting</f:link.action></p>
 	</div>
-
+	<sub style="color:#FFF8CA;">*adjust parameters and data corpus in the code</sub>
 
 
 
